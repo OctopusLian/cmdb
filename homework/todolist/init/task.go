@@ -1,9 +1,9 @@
 /*
  * @Description:
  * @Author: neozhang
- * @Date: 2022-01-02 17:25:04
+ * @Date: 2022-01-02 17:32:45
  * @LastEditors: neozhang
- * @LastEditTime: 2022-01-02 17:41:01
+ * @LastEditTime: 2022-01-02 17:32:45
  */
 package init
 
@@ -13,6 +13,5 @@ import (
 )
 
 func init() {
-	commands.RegisterLoginCallback(controllers.Login)
 	commands.Register("退出", controllers.Logout)
 }

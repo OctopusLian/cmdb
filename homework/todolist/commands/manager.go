@@ -3,7 +3,7 @@
  * @Author: neozhang
  * @Date: 2022-01-02 16:52:43
  * @LastEditors: neozhang
- * @LastEditTime: 2022-01-02 17:22:26
+ * @LastEditTime: 2022-01-02 17:38:09
  */
 package commands
 
@@ -16,7 +16,8 @@ import (
 )
 
 type manager struct {
-	cmds map[int]*command.Command
+	loginCallback command.LoginCallback
+	cmds          map[int]*command.Command
 }
 
 func newManger() *manager {
@@ -27,6 +28,10 @@ func newManger() *manager {
 
 func (mgr *manager) register(name string, callback command.Callback) {
 	mgr.cmds[len(mgr.cmds)+1] = command.New(name, callback)
+}
+
+func (mgr *manager) registerLoginCallback(callback command.LoginCallback) {
+	mgr.loginCallback = callback
 }
 
 func (mgr *manager) prompt() {
@@ -59,6 +64,10 @@ func (mgr *manager) run() {
 }
 
 var mgr *manager = newManger()
+
+func RegisterLoginCallback(callback command.LoginCallback) {
+	mgr.registerLoginCallback(callback)
+}
 
 func Register(name string, callback command.Callback) {
 	mgr.register(name, callback)
