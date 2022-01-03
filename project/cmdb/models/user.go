@@ -3,14 +3,14 @@
  * @Author: neozhang
  * @Date: 2022-01-03 18:38:59
  * @LastEditors: neozhang
- * @LastEditTime: 2022-01-03 22:12:23
+ * @LastEditTime: 2022-01-03 22:24:15
  */
 package models
 
 import "cmdb/utils"
 
 const (
-	sqlQueryByName = "select id,name from user where name=?"
+	sqlQueryByName = "select id,name,password from user where name=?"
 )
 
 //User用户对象
@@ -36,6 +36,8 @@ func (u *User) ValidPassword(password string) bool {
 //通过用户名获取用户
 func GetUserByName(name string) *User {
 	user := &User{}
+
+	//TODO:issue 2
 	if err := db.QueryRow(sqlQueryByName, name).Scan(&user.ID, &user.Name, &user.Password); err == nil {
 		return user
 	}
