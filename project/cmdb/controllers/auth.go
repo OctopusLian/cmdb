@@ -3,7 +3,7 @@
  * @Author: neozhang
  * @Date: 2022-01-03 16:39:45
  * @LastEditors: neozhang
- * @LastEditTime: 2022-01-03 19:28:58
+ * @LastEditTime: 2022-01-03 21:56:07
  */
 package controllers
 
@@ -29,7 +29,7 @@ func (c *AuthController) Login() {
 		//获取用户提交数据
 		c.GetString("name")
 		c.GetString("password")
-		if err := c.ParseForm(form); err != nil {
+		if err := c.ParseForm(form); err == nil {
 			user := models.GetUserByName(form.Name)
 			if user == nil {
 				//用户不存在

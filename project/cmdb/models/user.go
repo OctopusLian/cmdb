@@ -3,9 +3,15 @@
  * @Author: neozhang
  * @Date: 2022-01-03 18:38:59
  * @LastEditors: neozhang
- * @LastEditTime: 2022-01-03 19:00:21
+ * @LastEditTime: 2022-01-03 22:12:23
  */
 package models
+
+import "cmdb/utils"
+
+const (
+	sqlQueryByName = "select id,name from user where name=?"
+)
 
 //User用户对象
 type User struct {
@@ -24,10 +30,14 @@ type User struct {
 
 //验证用户密码是否正确
 func (u *User) ValidPassword(password string) bool {
-	return false
+	return u.Password == utils.Md5Text(password)
 }
 
 //通过用户名获取用户
 func GetUserByName(name string) *User {
+	user := &User{}
+	if err := db.QueryRow(sqlQueryByName, name).Scan(&user.ID, &user.Name, &user.Password); err == nil {
+		return user
+	}
 	return nil
 }

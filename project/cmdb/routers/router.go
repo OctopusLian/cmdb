@@ -3,7 +3,7 @@
  * @Author: neozhang
  * @Date: 2022-01-03 17:06:22
  * @LastEditors: neozhang
- * @LastEditTime: 2022-01-03 17:30:32
+ * @LastEditTime: 2022-01-03 22:14:28
  */
 package routers
 
@@ -15,4 +15,5 @@ import (
 
 func init() {
 	beego.AutoRouter(&controllers.AuthController{})
+	beego.AutoRouter(&controllers.HomeController{})
 }
