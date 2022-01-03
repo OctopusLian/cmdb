@@ -1,3 +1,10 @@
+<!--
+ * @Description: 
+ * @Author: neozhang
+ * @Date: 2022-01-03 16:52:21
+ * @LastEditors: neozhang
+ * @LastEditTime: 2022-01-03 21:40:24
+-->
 <!DOCTYPE html>
 <html>
     <head>
@@ -5,8 +12,8 @@
        <title>{{ config "String" "AppName" "CMDB"}}</title>
     </head>
     <body>
-        <form action="" method="POST">
-            <label>用户名：</label><input type="text" name="name" value="" /> <br/>
+        <form action="{{urlfor `AuthController.Login`}}" method="POST">
+            <label>用户名：</label><input type="text" name="name" value="{{ .form.Name }}" /> <br/>
             <label>密码：</label><input type="password" name="password" value="" /> <br/>
             <input type="submit" value="登录"/>
         </form>
