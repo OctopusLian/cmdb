@@ -3,7 +3,7 @@
  * @Author: neozhang
  * @Date: 2022-01-03 18:38:59
  * @LastEditors: neozhang
- * @LastEditTime: 2022-01-03 22:24:15
+ * @LastEditTime: 2022-01-04 17:30:55
  */
 package models
 
@@ -11,6 +11,7 @@ import "cmdb/utils"
 
 const (
 	sqlQueryByName = "select id,name,password from user where name=?"
+	sqlQuery       = "select id from user"
 )
 
 //User用户对象
@@ -42,4 +43,21 @@ func GetUserByName(name string) *User {
 		return user
 	}
 	return nil
+}
+
+// 查询用户
+func QueryUser(q string) []*User {
+	users := make([]*User, 0, 10)
+	//TODO: panic
+	rows, err := db.Query(sqlQuery)
+	if err != nil {
+		return users
+	}
+	for rows.Next() {
+		user := &User{}
+		if err := rows.Scan(&user.ID, &user.Name); err == nil {
+			users = append(users, user)
+		}
+	}
+	return users
 }

@@ -3,7 +3,7 @@
  * @Author: neozhang
  * @Date: 2022-01-03 16:39:45
  * @LastEditors: neozhang
- * @LastEditTime: 2022-01-03 21:56:07
+ * @LastEditTime: 2022-01-04 17:09:28
  */
 package controllers
 
@@ -36,7 +36,7 @@ func (c *AuthController) Login() {
 				errs.Add("default", "用户名或密码错误")
 			} else if user.ValidPassword(form.Password) {
 				//用户密码正确
-				c.Redirect("home/index/", http.StatusFound)
+				c.Redirect("home/index", http.StatusFound)
 			} else {
 				//用户密码不正确
 				errs.Add("default", "用户名或密码错误")

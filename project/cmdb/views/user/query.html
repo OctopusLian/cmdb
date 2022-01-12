@@ -1,0 +1,45 @@
+<!--
+ * @Description: 
+ * @Author: neozhang
+ * @Date: 2022-01-04 17:15:43
+ * @LastEditors: neozhang
+ * @LastEditTime: 2022-01-04 17:21:48
+-->
+<!DOCTYPE html>
+<html>
+    <head>
+       <meta charset="utf-8" />
+       <title>用户管理</title>
+    </head>
+    <body>
+        <table>
+            <thead>
+                <tr>
+                    <th>员工编号</th>
+                    <th>用户名</th>
+                    <th>姓名</th>
+                    <th>联系方式</th>
+                    <th>邮箱</th>
+                    <th>联系地址</th>
+                    <th>状态</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{ range .users }}
+                    <tr>
+                        <td>{{ .StaffID }}</td>
+                        <td>{{ .Name }}</td>
+                        <td>{{ .NickName }}</td>
+                        <td>{{ .Gender }}</td>
+                        <td>{{ .Gender }}</td>
+                        <td>
+                            编辑
+                            删除
+                        </td>
+                    </tr>
+                {{ end }}
+            </tbody>
+        </table>
+    </body>
+</html>
