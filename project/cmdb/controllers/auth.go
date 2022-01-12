@@ -3,7 +3,7 @@
  * @Author: neozhang
  * @Date: 2022-01-03 16:39:45
  * @LastEditors: neozhang
- * @LastEditTime: 2022-01-04 17:09:28
+ * @LastEditTime: 2022-01-12 23:02:23
  */
 package controllers
 
@@ -36,7 +36,12 @@ func (c *AuthController) Login() {
 				errs.Add("default", "用户名或密码错误")
 			} else if user.ValidPassword(form.Password) {
 				//用户密码正确
-				c.Redirect("home/index", http.StatusFound)
+				//记录用户状态
+				sessionKey := beego.AppConfig.DefaultString("auth:Session", "") //TODO
+				action := beego.AppConfig.DefaultString("auth:HomeAction", "")  //TODO
+
+				c.SetSession(sessionKey, user.ID)
+				c.Redirect(beego.URLFor(action), http.StatusFound)
 			} else {
 				//用户密码不正确
 				errs.Add("default", "用户名或密码错误")
@@ -51,4 +56,10 @@ func (c *AuthController) Login() {
 	c.Data["errors"] = errs
 	//定义加载页面
 	c.TplName = "auth/login.html"
+}
+
+func (c *AuthController) Logout() {
+	c.DestroySession()
+	action := beego.AppConfig.DefaultString("auth:LogoutAction", "AuthCron") //TODO
+	c.Redirect(beego.URLFor(action), http.StatusFound)
 }
