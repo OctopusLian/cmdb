@@ -3,13 +3,15 @@
  * @Author: neozhang
  * @Date: 2022-01-03 18:38:59
  * @LastEditors: neozhang
- * @LastEditTime: 2022-01-12 23:10:28
+ * @LastEditTime: 2022-01-13 22:49:41
  */
 package models
 
 import (
 	"cmdb/utils"
 	"time"
+
+	"github.com/beego/beego/v2/adapter/orm"
 )
 
 const (
@@ -55,17 +57,31 @@ func (u *User) StatusText() string {
 		return "正常"
 	case 1:
 		return "锁定"
+	case 2:
+		return "离职"
+	}
+	return "未知"
+}
+
+func GetUserByPk(pk int) *User {
+	user := &User{
+		ID: pk,
+	}
+	ormer := orm.NewOrm()
+	if err := ormer.Read(user); err == nil {
+		return user
 	}
 
-	return "" //TODO
+	return nil
 }
 
 //通过用户名获取用户
 func GetUserByName(name string) *User {
-	user := &User{}
-
-	//TODO:issue 2
-	if err := db.QueryRow(sqlQueryByName, name).Scan(&user.ID, &user.Name, &user.Password); err == nil {
+	user := &User{
+		Name: name,
+	}
+	ormer := orm.NewOrm()
+	if err := ormer.Read(user, "Name"); err == nil {
 		return user
 	}
 	return nil
@@ -73,17 +89,31 @@ func GetUserByName(name string) *User {
 
 // 查询用户
 func QueryUser(q string) []*User {
-	users := make([]*User, 0, 10)
-	//TODO: panic
-	rows, err := db.Query(sqlQuery)
-	if err != nil {
-		return users
+	var users []*User
+	queryset := orm.NewOrm().QueryTable(&User{})
+	if q != "" {
+		cond := orm.NewCondition()
+		cond = cond.Or("name__iccontains", q)
+		cond = cond.Or("nickname__iccontains", q)
+		cond = cond.Or("tel__iccontains", q)
+		cond = cond.Or("addr__iccontains", q)
+		cond = cond.Or("email__iccontains", q)
+		cond = cond.Or("department__iccontains", q)
+		queryset = queryset.SetCond((cond)
 	}
-	for rows.Next() {
-		user := &User{}
-		if err := rows.Scan(&user.ID, &user.Name); err == nil {
-			users = append(users, user)
-		}
-	}
+	queryset.All(&useers)
 	return users
+}
+
+//修改用户信息
+//func ModifyUser(form *forms.User)
+
+//删除用户
+func DeleteUser(pk int) {
+	ormer := orm.NewOrm()
+	ormer.Delete(&User{ID:pk})
+}
+
+func init() {
+	orm.RegisterModel(new(User))
 }
