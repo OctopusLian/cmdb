@@ -2,7 +2,10 @@ module cmdb
 
 go 1.17
 
-require github.com/astaxie/beego v1.12.3
+require (
+	github.com/anaskhan96/go-password-encoder v0.0.0-20201010210601-c765b799fd72
+	github.com/astaxie/beego v1.12.3
+)
 
 require github.com/pkg/errors v0.9.1 // indirect
 

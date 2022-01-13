@@ -3,7 +3,7 @@
  * @Author: neozhang
  * @Date: 2022-01-03 18:38:59
  * @LastEditors: neozhang
- * @LastEditTime: 2022-01-13 22:49:41
+ * @LastEditTime: 2022-01-13 23:15:27
  */
 package models
 
@@ -11,6 +11,7 @@ import (
 	"cmdb/utils"
 	"time"
 
+	"github.com/anaskhan96/go-password-encoder"
 	"github.com/beego/beego/v2/adapter/orm"
 )
 
@@ -112,6 +113,14 @@ func QueryUser(q string) []*User {
 func DeleteUser(pk int) {
 	ormer := orm.NewOrm()
 	ormer.Delete(&User{ID:pk})
+}
+
+func ModifyUserPassword(pk int,password string) {
+	if user := GetUserByPk(pk); user != nil {
+		user.Password = password
+		ormer := orm.NewOrm()
+		ormer.Update(user,"Password")
+	}
 }
 
 func init() {
