@@ -3,7 +3,7 @@
  * @Author: neozhang
  * @Date: 2022-01-03 18:38:59
  * @LastEditors: neozhang
- * @LastEditTime: 2022-01-13 23:15:27
+ * @LastEditTime: 2022-01-14 13:15:30
  */
 package models
 
@@ -120,6 +120,8 @@ func ModifyUserPassword(pk int,password string) {
 		user.Password = password
 		ormer := orm.NewOrm()
 		ormer.Update(user,"Password")
+	} else {
+		//记录错误
 	}
 }
 
