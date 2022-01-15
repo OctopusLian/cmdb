@@ -3,24 +3,33 @@
  * @Author: neozhang
  * @Date: 2022-01-04 17:11:42
  * @LastEditors: neozhang
- * @LastEditTime: 2022-01-04 17:15:24
+ * @LastEditTime: 2022-01-15 23:19:06
  */
 package controllers
 
 import (
-	"cmdb/models"
-
-	"github.com/astaxie/beego"
+	"cmdb/base/controllers/auth"
 )
 
 // UserController 用户控制管理器
 type UserController struct {
-	beego.Controller
+	auth.AuthorizationController
 }
 
 // Query 查询用户
 func (c *UserController) Query() {
-	users := models.QueryUser("")
-	c.Data["users"] = users
+	q := c.GetString("q")
+
+	c.Data["users"] = services.userServices.Query(q)
 	c.TplName = "user/query.html"
+}
+
+//修改用户
+func (c *UserController) Modify() {
+
+}
+
+//删除用户
+func (c *UserController) Delete() {
+
 }

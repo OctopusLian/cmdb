@@ -3,7 +3,7 @@
  * @Author: neozhang
  * @Date: 2022-01-03 16:39:45
  * @LastEditors: neozhang
- * @LastEditTime: 2022-01-12 23:02:23
+ * @LastEditTime: 2022-01-15 23:20:13
  */
 package controllers
 
@@ -30,7 +30,7 @@ func (c *AuthController) Login() {
 		c.GetString("name")
 		c.GetString("password")
 		if err := c.ParseForm(form); err == nil {
-			user := models.GetUserByName(form.Name)
+			user := models.GetUserByName(form.Name) //为什么导入不了services包
 			if user == nil {
 				//用户不存在
 				errs.Add("default", "用户名或密码错误")

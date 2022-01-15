@@ -3,7 +3,7 @@
  * @Author: neozhang
  * @Date: 2022-01-03 18:38:59
  * @LastEditors: neozhang
- * @LastEditTime: 2022-01-14 13:15:30
+ * @LastEditTime: 2022-01-15 22:59:33
  */
 package models
 
@@ -11,7 +11,6 @@ import (
 	"cmdb/utils"
 	"time"
 
-	"github.com/anaskhan96/go-password-encoder"
 	"github.com/beego/beego/v2/adapter/orm"
 )
 
@@ -62,67 +61,6 @@ func (u *User) StatusText() string {
 		return "离职"
 	}
 	return "未知"
-}
-
-func GetUserByPk(pk int) *User {
-	user := &User{
-		ID: pk,
-	}
-	ormer := orm.NewOrm()
-	if err := ormer.Read(user); err == nil {
-		return user
-	}
-
-	return nil
-}
-
-//通过用户名获取用户
-func GetUserByName(name string) *User {
-	user := &User{
-		Name: name,
-	}
-	ormer := orm.NewOrm()
-	if err := ormer.Read(user, "Name"); err == nil {
-		return user
-	}
-	return nil
-}
-
-// 查询用户
-func QueryUser(q string) []*User {
-	var users []*User
-	queryset := orm.NewOrm().QueryTable(&User{})
-	if q != "" {
-		cond := orm.NewCondition()
-		cond = cond.Or("name__iccontains", q)
-		cond = cond.Or("nickname__iccontains", q)
-		cond = cond.Or("tel__iccontains", q)
-		cond = cond.Or("addr__iccontains", q)
-		cond = cond.Or("email__iccontains", q)
-		cond = cond.Or("department__iccontains", q)
-		queryset = queryset.SetCond((cond)
-	}
-	queryset.All(&useers)
-	return users
-}
-
-//修改用户信息
-//func ModifyUser(form *forms.User)
-
-//删除用户
-func DeleteUser(pk int) {
-	ormer := orm.NewOrm()
-	ormer.Delete(&User{ID:pk})
-}
-
-func ModifyUserPassword(pk int,password string) {
-	if user := GetUserByPk(pk); user != nil {
-		user.Password = password
-		ormer := orm.NewOrm()
-		ormer.Update(user,"Password")
-	} else {
-		//记录错误
-	}
 }
 
 func init() {

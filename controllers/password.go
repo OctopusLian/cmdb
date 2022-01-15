@@ -3,7 +3,7 @@
  * @Author: neozhang
  * @Date: 2022-01-12 22:50:19
  * @LastEditors: neozhang
- * @LastEditTime: 2022-01-14 13:23:55
+ * @LastEditTime: 2022-01-15 23:05:31
  */
 package controllers
 
@@ -11,7 +11,6 @@ import (
 	"cmdb/base/controllers/auth"
 	"cmdb/base/errors"
 	"cmdb/forms"
-	"cmdb/models"
 
 	"github.com/beego/beego/v2/core/validation"
 	//"regexp"
@@ -36,9 +35,9 @@ func (c *PasswordController) Modify() {
 				if hasError, err := valid.Valid(form); err != nil {
 					errs.Add("default", err.Error())
 				} else if hasError {
-					errs.AddValidation(valid)
+					//errs.AddValidation(valid)
 				} else {
-					models.ModifyUserPassword(c.LoginUser.ID, form.Password)
+					//models.ModifyUserPassword(c.LoginUser.ID, form.Password)
 				}
 
 			}
