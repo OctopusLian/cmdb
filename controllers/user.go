@@ -3,7 +3,7 @@
  * @Author: neozhang
  * @Date: 2022-01-04 17:11:42
  * @LastEditors: neozhang
- * @LastEditTime: 2022-01-15 23:19:06
+ * @LastEditTime: 2022-01-15 23:40:42
  */
 package controllers
 
@@ -20,7 +20,7 @@ type UserController struct {
 func (c *UserController) Query() {
 	q := c.GetString("q")
 
-	c.Data["users"] = services.userServices.Query(q)
+	c.Data["users"] = services.userServices.Query(q) //TODO
 	c.TplName = "user/query.html"
 }
 
