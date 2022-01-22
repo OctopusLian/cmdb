@@ -1,0 +1,808 @@
+{
+  "rootTopicKey": "8ded1c5a-c66e-4aac-a2a9-6c39b5892fa7",
+  "editorRootTopicKey": "8ded1c5a-c66e-4aac-a2a9-6c39b5892fa7",
+  "focusKey": "b929cc06-f6e8-4718-86ae-663825f57e47",
+  "extData": {
+    "TOPIC_REFERENCE": {
+      "reference": {}
+    }
+  },
+  "topics": [
+    {
+      "key": "4d9ccba9-2ea8-47cd-84b3-a6c3348ba059",
+      "parentKey": "0a63ff49-c3ec-473f-855b-a38bd968ec8d",
+      "subKeys": [],
+      "collapse": false,
+      "style": null,
+      "blocks": [
+        {
+          "type": "CONTENT",
+          "data": "趋势分析"
+        }
+      ]
+    },
+    {
+      "key": "75692046-7dc3-4612-9f63-7cb1fd740938",
+      "parentKey": "fd0665e8-2178-46e4-8a67-0b86ac68c6e3",
+      "subKeys": [
+        "4d2bf14f-8cc6-4ebc-97ce-e0928480ade8",
+        "7a2439cc-1a15-4000-aa85-7ba5077a660e",
+        "0431b90f-5009-47eb-939c-be24e31ec2e9",
+        "165514a0-87e2-4225-87d0-e32f1e9665e8",
+        "31755fee-2b49-43ef-8757-6460cbf6811b"
+      ],
+      "collapse": false,
+      "style": null,
+      "blocks": [
+        {
+          "type": "CONTENT",
+          "data": "流程"
+        }
+      ]
+    },
+    {
+      "key": "1cff683a-b49b-4c1b-82ec-01a93a480965",
+      "parentKey": "0a63ff49-c3ec-473f-855b-a38bd968ec8d",
+      "subKeys": [],
+      "collapse": false,
+      "style": null,
+      "blocks": [
+        {
+          "type": "CONTENT",
+          "data": "数据可视化"
+        }
+      ]
+    },
+    {
+      "key": "ea9b6b3f-5153-476c-8b98-d145ca10e4a8",
+      "parentKey": "8ded1c5a-c66e-4aac-a2a9-6c39b5892fa7",
+      "subKeys": [],
+      "collapse": false,
+      "style": null,
+      "blocks": [
+        {
+          "type": "CONTENT",
+          "data": "PromQL"
+        }
+      ]
+    },
+    {
+      "key": "2bf9c416-12ca-4661-b64e-d6dfc4dbee7d",
+      "parentKey": "8e3c2cde-38ed-4984-a2b7-fdaccbf7ccf4",
+      "subKeys": [],
+      "collapse": false,
+      "style": null,
+      "blocks": [
+        {
+          "type": "CONTENT",
+          "data": "数据采集和存储时序数据"
+        }
+      ]
+    },
+    {
+      "key": "7a2439cc-1a15-4000-aa85-7ba5077a660e",
+      "parentKey": "75692046-7dc3-4612-9f63-7cb1fd740938",
+      "subKeys": [],
+      "collapse": false,
+      "style": null,
+      "blocks": [
+        {
+          "type": "CONTENT",
+          "data": "使用HTTP请求获取采集目标指标数据，并进行持久化存储"
+        }
+      ]
+    },
+    {
+      "key": "a2a90a3a-bbb4-4790-8d45-156fd796ffeb",
+      "parentKey": "70f34fa2-550f-45e4-a166-40c3b22b5d32",
+      "subKeys": [
+        "0b438686-1f49-474c-a7e9-f46ef2325d38",
+        "f5e45256-b03c-48ca-82ea-5c9f7a144d0a",
+        "ff915ba0-8929-4665-84ab-a430191b772b",
+        "e6b40c12-c9e6-47a9-acca-774ae4671bbd",
+        "1f59206d-11ad-4ad0-93b7-34f26e23731c",
+        "fc8ea1a9-51da-4577-92d2-4fc6a6186696",
+        "be0a582e-a87a-42d2-bc0f-cf6835070049"
+      ],
+      "collapse": false,
+      "style": null,
+      "blocks": [
+        {
+          "type": "CONTENT",
+          "data": "特点"
+        }
+      ]
+    },
+    {
+      "key": "8e3c2cde-38ed-4984-a2b7-fdaccbf7ccf4",
+      "parentKey": "f31a794f-dfdb-4a84-b630-8f785790a7e6",
+      "subKeys": [
+        "2bf9c416-12ca-4661-b64e-d6dfc4dbee7d",
+        "c41fa4e3-9af1-4abf-a7a2-11d23ad44f61"
+      ],
+      "collapse": false,
+      "style": null,
+      "blocks": [
+        {
+          "type": "CONTENT",
+          "data": "Prometheus Server"
+        }
+      ]
+    },
+    {
+      "key": "33b767fd-5bde-43dd-8d34-8cee5fd65a1d",
+      "parentKey": "8ded1c5a-c66e-4aac-a2a9-6c39b5892fa7",
+      "subKeys": [],
+      "collapse": false,
+      "style": null,
+      "blocks": [
+        {
+          "type": "CONTENT",
+          "data": "HTTPAPI"
+        }
+      ]
+    },
+    {
+      "key": "165514a0-87e2-4225-87d0-e32f1e9665e8",
+      "parentKey": "75692046-7dc3-4612-9f63-7cb1fd740938",
+      "subKeys": [],
+      "collapse": false,
+      "style": null,
+      "blocks": [
+        {
+          "type": "CONTENT",
+          "data": "将告警发送于alertmanager，由alertmanager进行分组、去重功能后发送告警通知或恢复通知"
+        }
+      ]
+    },
+    {
+      "key": "4d405acd-14cd-43c3-beb1-649478335484",
+      "parentKey": "8ded1c5a-c66e-4aac-a2a9-6c39b5892fa7",
+      "subKeys": [],
+      "collapse": false,
+      "style": null,
+      "blocks": [
+        {
+          "type": "CONTENT",
+          "data": "联合模式"
+        }
+      ]
+    },
+    {
+      "key": "80b7ec9f-718f-42b3-9201-8aba977f6b78",
+      "parentKey": "8ded1c5a-c66e-4aac-a2a9-6c39b5892fa7",
+      "subKeys": [],
+      "collapse": false,
+      "style": null,
+      "blocks": [
+        {
+          "type": "CONTENT",
+          "data": "配置"
+        }
+      ]
+    },
+    {
+      "key": "8af8b69b-ea6c-4a8c-b024-cb909fe33751",
+      "parentKey": "8ded1c5a-c66e-4aac-a2a9-6c39b5892fa7",
+      "subKeys": [],
+      "collapse": false,
+      "style": null,
+      "blocks": [
+        {
+          "type": "CONTENT",
+          "data": "告警管理"
+        }
+      ]
+    },
+    {
+      "key": "31755fee-2b49-43ef-8757-6460cbf6811b",
+      "parentKey": "75692046-7dc3-4612-9f63-7cb1fd740938",
+      "subKeys": [],
+      "collapse": false,
+      "style": null,
+      "blocks": [
+        {
+          "type": "CONTENT",
+          "data": "可调用Prometheus Server提供的HTTP API获取采集数据用于可视化"
+        }
+      ]
+    },
+    {
+      "key": "45b069a4-fba9-4f89-a232-9eaed0348065",
+      "parentKey": "8ded1c5a-c66e-4aac-a2a9-6c39b5892fa7",
+      "subKeys": [],
+      "collapse": false,
+      "style": null,
+      "blocks": [
+        {
+          "type": "CONTENT",
+          "data": "部署安装"
+        }
+      ]
+    },
+    {
+      "key": "ff915ba0-8929-4665-84ab-a430191b772b",
+      "parentKey": "a2a90a3a-bbb4-4790-8d45-156fd796ffeb",
+      "subKeys": [],
+      "collapse": false,
+      "style": null,
+      "blocks": [
+        {
+          "type": "CONTENT",
+          "data": "单节点部署，不依赖分布式部署"
+        }
+      ]
+    },
+    {
+      "key": "d125d799-707d-4faa-97c0-4755c67a6936",
+      "parentKey": "0cbb0dcb-c6de-472e-a236-9bf73b3ef54b",
+      "subKeys": [],
+      "collapse": false,
+      "style": null,
+      "blocks": [
+        {
+          "type": "CONTENT",
+          "data": "暴露第三方服务采集数据"
+        }
+      ]
+    },
+    {
+      "key": "7abe72a3-3e79-41b2-ad60-4f548d2ccf04",
+      "parentKey": "f31a794f-dfdb-4a84-b630-8f785790a7e6",
+      "subKeys": [
+        "87d12c0f-9a84-4842-a044-082604178e28"
+      ],
+      "collapse": false,
+      "style": null,
+      "blocks": [
+        {
+          "type": "CONTENT",
+          "data": "client libraies"
+        }
+      ]
+    },
+    {
+      "key": "87d12c0f-9a84-4842-a044-082604178e28",
+      "parentKey": "7abe72a3-3e79-41b2-ad60-4f548d2ccf04",
+      "subKeys": [],
+      "collapse": false,
+      "style": null,
+      "blocks": [
+        {
+          "type": "CONTENT",
+          "data": "提供应用程序数据收集功能"
+        }
+      ]
+    },
+    {
+      "key": "c592353f-cdf6-4435-bd35-922d6daf4be8",
+      "parentKey": "f5e45256-b03c-48ca-82ea-5c9f7a144d0a",
+      "subKeys": [],
+      "collapse": false,
+      "style": null,
+      "blocks": [
+        {
+          "type": "CONTENT",
+          "data": "可对metric进行数学运算、逻辑运算等操作"
+        }
+      ]
+    },
+    {
+      "key": "0cbb0dcb-c6de-472e-a236-9bf73b3ef54b",
+      "parentKey": "f31a794f-dfdb-4a84-b630-8f785790a7e6",
+      "subKeys": [
+        "d125d799-707d-4faa-97c0-4755c67a6936"
+      ],
+      "collapse": false,
+      "style": null,
+      "blocks": [
+        {
+          "type": "CONTENT",
+          "data": "Exporters"
+        }
+      ]
+    },
+    {
+      "key": "70f34fa2-550f-45e4-a166-40c3b22b5d32",
+      "parentKey": "8ded1c5a-c66e-4aac-a2a9-6c39b5892fa7",
+      "subKeys": [
+        "df0d9df8-414a-48f5-9c76-7e343dfe7114",
+        "0a63ff49-c3ec-473f-855b-a38bd968ec8d",
+        "a2a90a3a-bbb4-4790-8d45-156fd796ffeb",
+        "f31a794f-dfdb-4a84-b630-8f785790a7e6",
+        "fd0665e8-2178-46e4-8a67-0b86ac68c6e3",
+        "b75c49e5-6811-4b5e-beec-89be203bcad0"
+      ],
+      "collapse": false,
+      "style": null,
+      "blocks": [
+        {
+          "type": "CONTENT",
+          "data": "介绍"
+        }
+      ]
+    },
+    {
+      "key": "6cf91802-3879-4eb9-b684-e7869ec85547",
+      "parentKey": "f5e45256-b03c-48ca-82ea-5c9f7a144d0a",
+      "subKeys": [],
+      "collapse": false,
+      "style": null,
+      "blocks": [
+        {
+          "type": "CONTENT",
+          "data": "PromQL"
+        }
+      ]
+    },
+    {
+      "key": "b75c49e5-6811-4b5e-beec-89be203bcad0",
+      "parentKey": "70f34fa2-550f-45e4-a166-40c3b22b5d32",
+      "subKeys": [
+        "2813081c-18e4-4500-a9a6-761572e06e91",
+        "23a18a02-955d-4b99-ad7a-015f8f052b7c",
+        "b929cc06-f6e8-4718-86ae-663825f57e47"
+      ],
+      "collapse": false,
+      "style": null,
+      "blocks": [
+        {
+          "type": "CONTENT",
+          "data": "使用场景"
+        }
+      ]
+    },
+    {
+      "key": "0a63ff49-c3ec-473f-855b-a38bd968ec8d",
+      "parentKey": "70f34fa2-550f-45e4-a166-40c3b22b5d32",
+      "subKeys": [
+        "4d9ccba9-2ea8-47cd-84b3-a6c3348ba059",
+        "8e931ec0-4ce6-48be-b89a-e9531eb3bc9b",
+        "aef5f7e5-f55b-4695-8bc0-1f93d03fe488",
+        "0bc656b9-1e03-4f87-98a6-812c6293ea86",
+        "1cff683a-b49b-4c1b-82ec-01a93a480965"
+      ],
+      "collapse": false,
+      "style": null,
+      "blocks": [
+        {
+          "type": "CONTENT",
+          "data": "监控目的"
+        }
+      ]
+    },
+    {
+      "key": "df0d9df8-414a-48f5-9c76-7e343dfe7114",
+      "parentKey": "70f34fa2-550f-45e4-a166-40c3b22b5d32",
+      "subKeys": [],
+      "collapse": false,
+      "style": null,
+      "blocks": [
+        {
+          "type": "CONTENT",
+          "data": "一套开源的系统监控和告警的框架"
+        }
+      ]
+    },
+    {
+      "key": "2813081c-18e4-4500-a9a6-761572e06e91",
+      "parentKey": "b75c49e5-6811-4b5e-beec-89be203bcad0",
+      "subKeys": [],
+      "collapse": false,
+      "style": null,
+      "blocks": [
+        {
+          "type": "CONTENT",
+          "data": "记录任何纯数据的时序数据"
+        }
+      ]
+    },
+    {
+      "key": "9f95c5f3-e739-4564-98d9-7006ac8d978c",
+      "parentKey": "fd0665e8-2178-46e4-8a67-0b86ac68c6e3",
+      "subKeys": [],
+      "collapse": false,
+      "style": null,
+      "blocks": [
+        {
+          "type": "CONTENT",
+          "data": "官网架构图"
+        }
+      ]
+    },
+    {
+      "key": "0431b90f-5009-47eb-939c-be24e31ec2e9",
+      "parentKey": "75692046-7dc3-4612-9f63-7cb1fd740938",
+      "subKeys": [],
+      "collapse": false,
+      "style": null,
+      "blocks": [
+        {
+          "type": "CONTENT",
+          "data": "定时运行本地规则进行数据聚合产生新的时序数据或告警"
+        }
+      ]
+    },
+    {
+      "key": "b929cc06-f6e8-4718-86ae-663825f57e47",
+      "parentKey": "b75c49e5-6811-4b5e-beec-89be203bcad0",
+      "subKeys": [],
+      "collapse": false,
+      "style": null,
+      "blocks": [
+        {
+          "type": "CONTENT",
+          "data": "不适合100%准确性的要求，如请求计费"
+        }
+      ]
+    },
+    {
+      "key": "be0a582e-a87a-42d2-bc0f-cf6835070049",
+      "parentKey": "a2a90a3a-bbb4-4790-8d45-156fd796ffeb",
+      "subKeys": [],
+      "collapse": false,
+      "style": null,
+      "blocks": [
+        {
+          "type": "CONTENT",
+          "data": "内置Dashboard用于基本功能查看和管理"
+        }
+      ]
+    },
+    {
+      "key": "fc8ea1a9-51da-4577-92d2-4fc6a6186696",
+      "parentKey": "a2a90a3a-bbb4-4790-8d45-156fd796ffeb",
+      "subKeys": [],
+      "collapse": false,
+      "style": null,
+      "blocks": [
+        {
+          "type": "CONTENT",
+          "data": "可使用PushGateway推送时间序列数据至Prometheus server"
+        }
+      ]
+    },
+    {
+      "key": "fd0665e8-2178-46e4-8a67-0b86ac68c6e3",
+      "parentKey": "70f34fa2-550f-45e4-a166-40c3b22b5d32",
+      "subKeys": [
+        "9f95c5f3-e739-4564-98d9-7006ac8d978c",
+        "75692046-7dc3-4612-9f63-7cb1fd740938"
+      ],
+      "collapse": false,
+      "style": null,
+      "blocks": [
+        {
+          "type": "CONTENT",
+          "data": "架构"
+        }
+      ]
+    },
+    {
+      "key": "8e54153d-7641-4fbb-b429-d9c12ab632b1",
+      "parentKey": "eac70cfe-4589-4c9a-9ebe-0057fb216ddc",
+      "subKeys": [],
+      "collapse": false,
+      "style": null,
+      "blocks": [
+        {
+          "type": "CONTENT",
+          "data": "对Prometheus Server产生告警去重、分组、发送等功能"
+        }
+      ]
+    },
+    {
+      "key": "eac70cfe-4589-4c9a-9ebe-0057fb216ddc",
+      "parentKey": "f31a794f-dfdb-4a84-b630-8f785790a7e6",
+      "subKeys": [
+        "8e54153d-7641-4fbb-b429-d9c12ab632b1"
+      ],
+      "collapse": false,
+      "style": null,
+      "blocks": [
+        {
+          "type": "CONTENT",
+          "data": "Alertmanager"
+        }
+      ]
+    },
+    {
+      "key": "8e931ec0-4ce6-48be-b89a-e9531eb3bc9b",
+      "parentKey": "0a63ff49-c3ec-473f-855b-a38bd968ec8d",
+      "subKeys": [],
+      "collapse": false,
+      "style": null,
+      "blocks": [
+        {
+          "type": "CONTENT",
+          "data": "对照分析"
+        }
+      ]
+    },
+    {
+      "key": "5790ff37-5d50-4392-b177-9555c43640f0",
+      "parentKey": "c2d91f31-5e84-491b-9dcc-7fa316dcce63",
+      "subKeys": [],
+      "collapse": false,
+      "style": null,
+      "blocks": [
+        {
+          "type": "CONTENT",
+          "data": "支持短期jobs，由jobs推送短期数据到push gateway，再由push gateway暴露给Prometheus Server"
+        }
+      ]
+    },
+    {
+      "key": "23a18a02-955d-4b99-ad7a-015f8f052b7c",
+      "parentKey": "b75c49e5-6811-4b5e-beec-89be203bcad0",
+      "subKeys": [],
+      "collapse": false,
+      "style": null,
+      "blocks": [
+        {
+          "type": "CONTENT",
+          "data": "\n以机器为中心的监控、面向高度动态的服务体系架构监控"
+        }
+      ]
+    },
+    {
+      "key": "f5e45256-b03c-48ca-82ea-5c9f7a144d0a",
+      "parentKey": "a2a90a3a-bbb4-4790-8d45-156fd796ffeb",
+      "subKeys": [
+        "6cf91802-3879-4eb9-b684-e7869ec85547",
+        "c592353f-cdf6-4435-bd35-922d6daf4be8"
+      ],
+      "collapse": false,
+      "style": null,
+      "blocks": [
+        {
+          "type": "CONTENT",
+          "data": "灵活强大的查询语言支持"
+        }
+      ]
+    },
+    {
+      "key": "0b438686-1f49-474c-a7e9-f46ef2325d38",
+      "parentKey": "a2a90a3a-bbb4-4790-8d45-156fd796ffeb",
+      "subKeys": [
+        "4f2b7cf7-8bd9-4772-a363-ad723093d8bf"
+      ],
+      "collapse": false,
+      "style": null,
+      "blocks": [
+        {
+          "type": "CONTENT",
+          "data": "多维数据模型"
+        }
+      ]
+    },
+    {
+      "key": "1f59206d-11ad-4ad0-93b7-34f26e23731c",
+      "parentKey": "a2a90a3a-bbb4-4790-8d45-156fd796ffeb",
+      "subKeys": [],
+      "collapse": false,
+      "style": null,
+      "blocks": [
+        {
+          "type": "CONTENT",
+          "data": "扫描目标与告警管理支持静态配置与动态服务发现"
+        }
+      ]
+    },
+    {
+      "key": "c41fa4e3-9af1-4abf-a7a2-11d23ad44f61",
+      "parentKey": "8e3c2cde-38ed-4984-a2b7-fdaccbf7ccf4",
+      "subKeys": [],
+      "collapse": false,
+      "style": null,
+      "blocks": [
+        {
+          "type": "CONTENT",
+          "data": "对数据进行告警分析"
+        }
+      ]
+    },
+    {
+      "key": "f31a794f-dfdb-4a84-b630-8f785790a7e6",
+      "parentKey": "70f34fa2-550f-45e4-a166-40c3b22b5d32",
+      "subKeys": [
+        "8e3c2cde-38ed-4984-a2b7-fdaccbf7ccf4",
+        "7abe72a3-3e79-41b2-ad60-4f548d2ccf04",
+        "c2d91f31-5e84-491b-9dcc-7fa316dcce63",
+        "0cbb0dcb-c6de-472e-a236-9bf73b3ef54b",
+        "eac70cfe-4589-4c9a-9ebe-0057fb216ddc"
+      ],
+      "collapse": false,
+      "style": null,
+      "blocks": [
+        {
+          "type": "CONTENT",
+          "data": "组件"
+        }
+      ]
+    },
+    {
+      "key": "c2d91f31-5e84-491b-9dcc-7fa316dcce63",
+      "parentKey": "f31a794f-dfdb-4a84-b630-8f785790a7e6",
+      "subKeys": [
+        "5790ff37-5d50-4392-b177-9555c43640f0"
+      ],
+      "collapse": false,
+      "style": null,
+      "blocks": [
+        {
+          "type": "CONTENT",
+          "data": "push gateway"
+        }
+      ]
+    },
+    {
+      "key": "e6b40c12-c9e6-47a9-acca-774ae4671bbd",
+      "parentKey": "a2a90a3a-bbb4-4790-8d45-156fd796ffeb",
+      "subKeys": [],
+      "collapse": false,
+      "style": null,
+      "blocks": [
+        {
+          "type": "CONTENT",
+          "data": "数据采集基于HTTP协议，使用Pull模式获取数据"
+        }
+      ]
+    },
+    {
+      "key": "aef5f7e5-f55b-4695-8bc0-1f93d03fe488",
+      "parentKey": "0a63ff49-c3ec-473f-855b-a38bd968ec8d",
+      "subKeys": [],
+      "collapse": false,
+      "style": null,
+      "blocks": [
+        {
+          "type": "CONTENT",
+          "data": "告警"
+        }
+      ]
+    },
+    {
+      "key": "4f2b7cf7-8bd9-4772-a363-ad723093d8bf",
+      "parentKey": "0b438686-1f49-474c-a7e9-f46ef2325d38",
+      "subKeys": [],
+      "collapse": false,
+      "style": null,
+      "blocks": [
+        {
+          "type": "CONTENT",
+          "data": "使用metric名和键值对来区分的时间序列数据"
+        }
+      ]
+    },
+    {
+      "key": "0bc656b9-1e03-4f87-98a6-812c6293ea86",
+      "parentKey": "0a63ff49-c3ec-473f-855b-a38bd968ec8d",
+      "subKeys": [],
+      "collapse": false,
+      "style": null,
+      "blocks": [
+        {
+          "type": "CONTENT",
+          "data": "故障分析与定位"
+        }
+      ]
+    },
+    {
+      "key": "9bf5c310-d835-4fe3-9ed2-926ea35d6a4f",
+      "parentKey": "8ded1c5a-c66e-4aac-a2a9-6c39b5892fa7",
+      "subKeys": [],
+      "collapse": false,
+      "style": null,
+      "blocks": [
+        {
+          "type": "CONTENT",
+          "data": "基本概念"
+        }
+      ]
+    },
+    {
+      "key": "8ded1c5a-c66e-4aac-a2a9-6c39b5892fa7",
+      "parentKey": null,
+      "subKeys": [
+        "70f34fa2-550f-45e4-a166-40c3b22b5d32",
+        "45b069a4-fba9-4f89-a232-9eaed0348065",
+        "9bf5c310-d835-4fe3-9ed2-926ea35d6a4f",
+        "80b7ec9f-718f-42b3-9201-8aba977f6b78",
+        "ea9b6b3f-5153-476c-8b98-d145ca10e4a8",
+        "33b767fd-5bde-43dd-8d34-8cee5fd65a1d",
+        "4d405acd-14cd-43c3-beb1-649478335484",
+        "8af8b69b-ea6c-4a8c-b024-cb909fe33751"
+      ],
+      "collapse": false,
+      "style": null,
+      "blocks": [
+        {
+          "type": "CONTENT",
+          "data": "Prometheus"
+        }
+      ]
+    },
+    {
+      "key": "4d2bf14f-8cc6-4ebc-97ce-e0928480ade8",
+      "parentKey": "75692046-7dc3-4612-9f63-7cb1fd740938",
+      "subKeys": [],
+      "collapse": false,
+      "style": null,
+      "blocks": [
+        {
+          "type": "CONTENT",
+          "data": "Prometheus通过Server discovery发现采集目标"
+        }
+      ]
+    }
+  ],
+  "config": {
+    "readOnly": false,
+    "allowUndo": true,
+    "layoutDir": 0,
+    "theme": {
+      "name": "theme2",
+      "randomColor": false,
+      "background": "#f8f8f8",
+      "highlightColor": "#50C9CE",
+      "marginH": 45,
+      "marginV": 10,
+      "contentStyle": {
+        "lineHeight": "1.5"
+      },
+      "linkStyle": {
+        "lineRadius": 5
+      },
+      "rootTopic": {
+        "contentStyle": {
+          "background": "#50C18A",
+          "color": "#fff",
+          "fontSize": "34px",
+          "borderRadius": "5px",
+          "padding": "16px 18px 16px 18px"
+        },
+        "subLinkStyle": {
+          "lineType": "curve",
+          "lineWidth": "2px",
+          "lineColor": "#43a9ff"
+        }
+      },
+      "primaryTopic": {
+        "contentStyle": {
+          "background": "#ffffff",
+          "borderWidth": "1px",
+          "borderStyle": "solid",
+          "borderColor": "rgb(221, 170, 68)",
+          "borderRadius": "5px",
+          "color": "rgb(103,103,103)",
+          "fontSize": "14px",
+          "padding": "6px 10px 5px 10px"
+        },
+        "subLinkStyle": {
+          "lineType": "round",
+          "lineRadius": 5,
+          "lineWidth": "2px",
+          "lineColor": "#43a9ff"
+        }
+      },
+      "normalTopic": {
+        "contentStyle": {
+          "background": "#fff",
+          "borderRadius": "5px",
+          "color": "rgb(103,103,103)",
+          "fontSize": "13px",
+          "padding": "3px 9px 4px",
+          "boxShadow": "1px 1px 1px #ccc"
+        },
+        "subLinkStyle": {
+          "lineType": "round",
+          "lineRadius": 5,
+          "lineWidth": "1px",
+          "lineColor": "#43a9ff"
+        }
+      }
+    }
+  },
+  "formatVersion": null
+}
