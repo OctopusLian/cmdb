@@ -1,0 +1,35 @@
+
+<li class="treeview {{ if eq .expand `asset_management` }}is-expanded{{ end }}">
+    <a class="app-menu__item" href="{{ urlfor `AssetPageController.Index` }}" data-toggle="treeview">
+        <i class="app-menu__icon fa fa-laptop"></i>
+        <span class="app-menu__label">资产管理</span>
+        <i class="treeview-indicator fa fa-angle-right"></i>
+    </a>
+    <ul class="treeview-menu">
+        <li>
+            <a class="treeview-item {{ if eq .menu `cloud` }}active{{ end }}" href="{{ urlfor `CloudPageController.Index` }}">
+                <i class="icon fa fa-circle-o"></i> 云平台
+            </a>
+        </li>
+        <li>
+            <a class="treeview-item {{ if eq .menu `virtual_machine` }}active{{ end }}" href="{{ urlfor `VirtualMachinePageController.Index` }}">
+                <i class="icon fa fa-circle-o"></i> 虚拟机
+            </a>
+        </li>
+    </ul>
+</li>
+
+<li class="treeview {{ if eq .expand `system_management` }}is-expanded{{ end }}">
+    <a class="app-menu__item " href="{{ urlfor `UserPageController.Index` }}" data-toggle="treeview">
+        <i class="app-menu__icon fa fa-th-list"></i>
+        <span class="app-menu__label">系统管理</span>
+        <i class="treeview-indicator fa fa-angle-right"></i>
+    </a>
+    <ul class="treeview-menu">
+        <li>
+            <a class="treeview-item {{ if eq .menu `user_management` }}active{{ end }}" href="{{ urlfor `UserPageController.Index` }}">
+            <i class="icon fa fa-circle-o"></i> 用户管理
+        </a>
+        </li>
+    </ul>
+</li>

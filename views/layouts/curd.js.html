@@ -1,0 +1,32 @@
+<script type="text/javascript">
+jQuery(document).ready(function() {
+    jQuery(document).on("click", ".btn-control", function() {
+        var url = jQuery(this).data("url"),
+            target = jQuery(this).data("target"),
+            pk = jQuery(this).data("pk"),
+            title = jQuery(this).data("title");
+
+        if(!url) {
+            return;
+        }
+
+        swal({
+            title: title,
+            text: "",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#DD6B55",
+            confirmButtonText: "确定",
+            cancelButtonText: "取消",
+            closeOnConfirm: false
+        },
+        function(){
+            request("POST", url, {pk: pk}, function(response) {
+                if(target && target in window) {
+                    window[target].ajax.reload(null, false);
+                }
+            });
+        });
+    });
+});
+</script>

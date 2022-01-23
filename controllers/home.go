@@ -1,20 +1,16 @@
-/*
- * @Description:
- * @Author: neozhang
- * @Date: 2022-01-03 19:05:58
- * @LastEditors: neozhang
- * @LastEditTime: 2022-01-15 23:23:10
- */
 package controllers
 
 import (
-	"cmdb/base/controllers/auth"
+	"cmdb/controllers/auth"
+	"net/http"
+
+	"github.com/astaxie/beego"
 )
 
 type HomeController struct {
-	auth.AuthorizationController
+	auth.LoginRequiredController
 }
 
 func (c *HomeController) Index() {
-	c.TplName = "home/index.html"
+	c.Redirect(beego.URLFor("UserPageController.Index"), http.StatusFound)
 }

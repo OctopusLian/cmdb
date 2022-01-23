@@ -1,0 +1,86 @@
+
+<script type="text/javascript">
+jQuery(document).ready(function() {
+    var table = window["datatable"] = jQuery('#datatable').DataTable({
+        dom: '<"row"<"col-6"l><"col-5"f><"#buttons.col-1">>t<"row"<"col-6"i><"col-6"p>>',
+        processing: true,
+        serverSide: true,
+        ajax: {
+            url: "{{ urlfor `CloudController.List` }}",
+            data: function(data) {
+                return {
+                    draw: data.draw,
+                    start: data.start,
+                    length: data.length,
+                    q : data.search.value
+                };
+            },
+            dataSrc: "result"
+        },
+        columns : [
+            {
+                data: function(row, type, set, meta) {
+                    return HtmlEncode(row["name"]);
+                }
+            },
+            {
+                data: function(row, type, set, meta) {
+                    return row["type"];
+                }
+            },
+            {
+                data: function(row, type, set, meta) {
+                    return HtmlEncode(row["addr"]);
+                }
+            },
+            {
+                data: function(row, type, set, meta) {
+                    return HtmlEncode(row["region"]);
+                }
+            },
+            {
+                data: function(row, type, set, meta) {
+                    return HtmlEncode(row["remark"]);
+                }
+            },
+            {
+                data: function(row, type, set, meta) {
+                    if (row["sync_time"]) {
+                        return jQuery.formatDateTime('yy-mm-dd hh:ii:ss', new Date(row["sync_time"]));
+                    }
+                    return "";
+                }
+            },
+            {
+                data: function(row, type, set, meta) {
+                    return row["status"] == 0 ? "启用" : "禁用";
+                }
+            },
+            {
+                data: function(row, type, set, meta) {
+                    var buttons = ['<div class="btn-group">'];
+                    buttons.push('<a title="编辑" class="btn btn-sm btn-warning btn-modify btn-open-dialog" data-title="编辑" data-url="{{ urlfor `CloudController.Modify` }}/?pk=:pk:"><i class="fa fa-edit" aria-hidden="true"></i></a>');
+
+                    if(row["status"] == 0) {
+                        buttons.push('<a title="禁用" class="btn btn-sm btn-secondary btn-control" data-url="{{ urlfor `CloudController.Disable` }}" data-target="datatable" data-title="确认停止?" data-pk=":pk:"><i class="fa fa-lock" aria-hidden="true"></i></a>');
+                    } else {
+                        buttons.push('<a title="启用" class="btn btn-sm btn-success btn-control" data-url="{{ urlfor `CloudController.Enable` }}" data-target="datatable" data-title="确认启动?" data-pk=":pk:"><i class="fa fa-unlock" aria-hidden="true"></i></a>');
+                    }
+                    buttons.push('<a title="删除" class="btn btn-sm btn-danger btn-control" data-url="{{ urlfor `CloudController.Delete` }}" data-target="datatable" data-title="确认删除?" data-pk=":pk:"><i class="fa fa-trash-o" aria-hidden="true"></i></a>');
+
+                    buttons.push('</div>');
+                    return buttons.join("").replace(/:pk:/g, row["id"]);
+                }
+            }
+        ]
+    });
+
+    table.on("draw", function() {
+        if(!jQuery("#buttons").attr("initd")) {
+            jQuery("#buttons").attr("initd", "initd").html('<a title="新建" class="btn btn-sm btn-primary btn-block btn-open-dialog" data-title="新建" data-url="{{ urlfor `CloudController.Create` }}">新建</a>');
+        }
+        jQuery('a[title]').tooltip()
+    });
+
+});
+</script>

@@ -1,0 +1,27 @@
+<table class="table table-hover table-bordered" id="datatable">
+    <thead>
+        <tr>
+            <th>AccessKey</th>
+            <th>SecrectKey</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {{ range .tokens }}
+        <tr>
+            <td>{{ .AccessKey }}</td>
+            <td>{{ .SecrectKey }}</td>
+            <td>
+                <a title="更换Token" class="btn btn-sm btn-warning btn-token"  href="javascript:void(0);"><i class="fa fa-refresh" aria-hidden="true"></i></a>
+            </td>
+        </tr>
+        {{ else }}
+            <tr>
+                <td colspan="2">暂无Token</td>
+                <td>
+                    <a title="生成Token" class="btn btn-sm btn-primary btn-token" href="javascript:void(0);"><i class="fa fa-plus" aria-hidden="true"></i></a>
+                </td>
+            </tr>
+        {{ end }}
+    </tbody>
+</table>

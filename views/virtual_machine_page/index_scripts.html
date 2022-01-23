@@ -1,0 +1,144 @@
+{{ define "queryform" }}\
+<form>\
+    <div class="form-group row">\
+        <label class="col-4 col-form-label-sm text-right">云平台:</label>\
+        <div class="col-7">\
+            <select class="form-control form-control-sm query"></select>\
+        </div>\
+    </div>\
+</form>\
+{{ end }}
+
+<script type="text/javascript">
+    jQuery(document).ready(function() {
+        var table = window["datatable"] = jQuery('#datatable').DataTable({
+            dom: '<"row"<"col-5"l><"col-3"f><"#buttons.col-3">>t<"row"<"col-6"i><"col-6"p>>',
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: "{{ urlfor `VirtualMachineController.List` }}",
+                data: function(data) {
+                    return {
+                        draw: data.draw,
+                        start: data.start,
+                        length: data.length,
+                        q: data.search.value,
+                        platform : jQuery("select.query").val()
+                    };
+                },
+                dataSrc: "result"
+            },
+            columns : [
+                {
+                    data: function(row, type, set, meta) {
+                        return HtmlEncode(row["name"]);
+                    }
+                },
+                {
+                    data: function(row, type, set, meta) {
+                        return HtmlEncode(row["platform"]["name"]);
+                    }
+                },
+                {
+                    data: function(row, type, set, meta) {
+                        return HtmlEncode(row["cpu"]) + "核" + "/" + HtmlEncode(row["memory"]) + "G";
+                    }
+                },
+                {
+                    data: function(row, type, set, meta) {
+                        return HtmlEncode(row["os"]);
+                    }
+                },
+                {
+                    data: function(row, type, set, meta) {
+                        return HtmlEncode(row["public_addrs"]);
+                    }
+                },
+                {
+                    data: function(row, type, set, meta) {
+                        return HtmlEncode(row["private_addrs"]);
+                    }
+                },
+                {
+                    data: function(row, type, set, meta) {
+                        if (row["vm_created_time"]) {
+                            return jQuery.formatDateTime('yy-mm-dd hh:ii:ss', new Date(row["vm_created_time"]));
+                        }
+                        return "";
+                    }
+                },
+                {
+                    data: function(row, type, set, meta) {
+                        if (row["vm_expired_time"]) {
+                            return jQuery.formatDateTime('yy-mm-dd hh:ii:ss', new Date(row["vm_expired_time"]));
+                        }
+                        return "";
+                    }
+                },
+                {
+                    data: function(row, type, set, meta) {
+                        return HtmlEncode(row["status"]);
+                    }
+                },
+                {
+                    data: function(row, type, set, meta) {
+                        if (row["update_time"]) {
+                            return jQuery.formatDateTime('yy-mm-dd hh:ii:ss', new Date(row["update_time"]));
+                        }
+                        return "";
+                    }
+                },
+                {
+                    data: function(row, type, set, meta) {
+                        var buttons = ['<div class="btn-group">'];
+                        if(row["status"] === "关机") {
+                            buttons.push('<a title="启动" class="btn btn-sm btn-success btn-control" data-url="{{ urlfor `VirtualMachineController.Start` }}" data-target="datatable" data-title="确认启动?" data-pk=":pk:"><i class="fa fa-play" aria-hidden="true"></i></a>');
+                        } else if(row["status"] === "运行中") {
+                            buttons.push('<a title="重启" class="btn btn-sm btn-warning btn-control" data-url="{{ urlfor `VirtualMachineController.Restart` }}" data-target="datatable" data-title="确认重启?" data-pk=":pk:"><i class="fa fa-spinner" aria-hidden="true"></i></a>');
+                            buttons.push('<a title="停止" class="btn btn-sm btn-danger btn-control" data-url="{{ urlfor `VirtualMachineController.Stop` }}" data-target="datatable" data-title="确认停止?" data-pk=":pk:"><i class="fa fa-stop" aria-hidden="true"></i></a>');
+                        }
+                        buttons.push('</div>');
+                        return buttons.join("").replace(/:pk:/g, row["id"]);
+                    }
+                }
+            ]
+        });
+
+        table.on("draw", function() {
+            if(!jQuery("#buttons").attr("initd")) {
+                jQuery("#buttons").attr("initd", "initd").html('{{ template `queryform` }}');
+                jQuery('select.query').select2({
+                    ajax: {
+                        url: '{{ urlfor `CloudController.List` }}',
+                        data: function (params) {
+                            return {
+                                q : params.term
+                            };
+                        },
+                        processResults: function (response) {
+                            var results = [
+                                {"id" : "", text:"全部"}
+                            ];
+                            jQuery.each(response["result"], function(index, value) {
+                                results.push({id: value["id"], text: HtmlEncode(value["name"])});
+                            });
+                            return {
+                                results: results
+                            };
+                        }
+                    }
+                });
+            }
+            jQuery('a[title]').tooltip()
+        });
+
+        jQuery(document).on("change", "select.query", function() {
+            table.ajax.reload(null, false);
+            return true;
+        });
+
+        setInterval(function() {
+            table.ajax.reload(null, false);
+        }, 10 * 1000);
+    });
+    </script>

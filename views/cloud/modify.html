@@ -1,0 +1,55 @@
+<form data-url="{{ urlfor `CloudController.Modify` }}" data-target="datatable">
+    <input type="hidden" name="id" value="{{ .platform.Id }}" />
+    <div class="form-group row">
+        <label for="platform.name" class="col-sm-2 col-form-label">名称<span class="text-danger"> * </span></label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" id="platform.name" name="name" placeholder="名称" value="{{ .platform.Name }}" />
+            <small class="form-text text-muted">
+                只能由长度位5-32位的英文字母、数字、下划线和中划线组成, 且必须唯一
+            </small>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="platform.type" class="col-sm-2 col-form-label">类型</label>
+        <div class="col-sm-10">
+            <select class="form-control" id="platform.type" name="type">
+                {{ range $key, $value := .types }}
+                <option value="{{ $key }}" {{ if eq $key $.platform.Type }}selected{{ end }}>{{ $value }}</option>
+                {{ end }}
+            </select>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="platform.addr" class="col-sm-2 col-form-label">地址<span class="text-danger"> * </span></label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" id="platform.addr" name="addr" placeholder="地址" value="{{ .platform.Addr }}" />
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="platform.region" class="col-sm-2 col-form-label">区域<span class="text-danger"> * </span></label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" id="platform.region" name="region" placeholder="区域" value="{{ .platform.Region }}" />
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="platform.key" class="col-sm-2 col-form-label">Key<span class="text-danger"> * </span></label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" id="platform.key" name="key" placeholder="留空不修改" value="" />
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="platform.secrect" class="col-sm-2 col-form-label">Secrect<span class="text-danger"> * </span></label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" id="platform.secrect" name="secrect" placeholder="留空不修改" value="" />
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="remark" class="col-sm-2 col-form-label">备注</label>
+        <div class="col-sm-10">
+            <textarea class="form-control" id="remark" name="remark" rows="3" placeholder="备注">{{ .platform.Remark }}</textarea>
+            <small class="form-text text-muted">
+                必须为0-512位长度的字符串
+            </small>
+        </div>
+    </div>
+</form>

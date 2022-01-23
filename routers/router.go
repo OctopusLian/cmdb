@@ -1,20 +1,26 @@
-/*
- * @Description:
- * @Author: neozhang
- * @Date: 2022-01-03 17:06:22
- * @LastEditors: neozhang
- * @LastEditTime: 2022-01-04 17:22:33
- */
 package routers
 
 import (
-	"cmdb/controllers"
-
 	"github.com/astaxie/beego"
+
+	"cmdb/controllers"
 )
 
 func init() {
-	beego.AutoRouter(&controllers.AuthController{})
-	beego.AutoRouter(&controllers.HomeController{})
+
+	// home
+	beego.Router("/", &controllers.HomeController{}, "*:Index")
+
+	// 云平台
+	beego.AutoRouter(&controllers.CloudPageController{})
+	beego.AutoRouter(&controllers.CloudController{})
+
+	// 虚拟机
+	beego.AutoRouter(&controllers.VirtualMachinePageController{})
+	beego.AutoRouter(&controllers.VirtualMachineController{})
+
+	// 用户
+	beego.AutoRouter(&controllers.UserPageController{})
 	beego.AutoRouter(&controllers.UserController{})
+	beego.AutoRouter(&controllers.TokenController{})
 }

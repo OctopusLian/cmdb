@@ -1,0 +1,45 @@
+<script type="text/javascript">
+jQuery(document).ready(function() {
+    jQuery(document).on("click", ".btn-open-dialog", function() {
+        var url = jQuery(this).data("url"),
+            title = jQuery(this).data("title"),
+            look = jQuery(this).data("look") == "look";
+
+        if(!url) {
+            return;
+        }
+
+        jQuery(".dialog-content").load(url, function(response) {
+            var dialog = jQuery(".dialog");
+            dialog.find(".dialog-title").text(title);
+            if(look) {
+                dialog.find(".btn-dialog-commit").hide();
+            } else {
+                dialog.find(".btn-dialog-commit").show();
+            }
+            dialog.modal({
+                show: true,
+                keyboard: false,
+                backdrop: 'static'
+            });
+        });
+    });
+    jQuery(".btn-dialog-commit").on("click", function() {
+        var dialog = jQuery(".dialog");
+        var form = dialog.find("form");
+        var url = form.data("url"),
+            target = form.data("target");
+
+        if(!url) {
+            return;
+        }
+
+        request("POST", url, form.serializeArray(), function(response) {
+            dialog.modal("hide");
+            if(target && target in window) {
+                window[target].ajax.reload(null, false);
+            }
+        });
+    });
+});
+</script>
