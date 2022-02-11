@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Development
+metadata:
+    name: web
+    labels:
+        env: test
+spec:
+    replicas: 3
+    selector:
+        matchLabels:
+            labels:
+                app: cmdb
+                test: test
+    template:
+        metadata:
+            labels:
+                app: cmdb
+                test: test
+        spec:
+            containers:
+            - name: web
+              image: nginx:latest
+              ports:
+              - name: http
+                containerPort: 80
+                protocol: tcp
+            - name: redis
+              image: redis:latest
+              ports:
+              - name: redis
+                containerPort: 6379
+                protocol: tcp
