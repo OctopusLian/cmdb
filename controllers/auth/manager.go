@@ -1,88 +1,67 @@
 package auth
 
 import (
-	"fmt"
-
 	"github.com/astaxie/beego/context"
 
 	"cmdb/models"
 )
 
-type Auth interface {
-	name() string
-	is(*context.Context) bool
-	login(*AuthController) bool
-	isLogin(*LoginRequiredController) *models.User
-	logout(*AuthController) bool
-	goLoginPage(*context.Context, string) bool
-	goHomePage(*context.Context) bool
+type AuthPlugin interface {
+	Name() string
+	Is(*context.Context) bool
+	IsLogin(*LoginRequiredController) *models.User
+	GoToLoginPage(*LoginRequiredController)
+	Login(*AuthController) bool
+	Logout(*AuthController)
 }
 
 type Manager struct {
-	plugins map[string]Auth
+	plugins map[string]AuthPlugin
 }
 
 func NewManager() *Manager {
 	return &Manager{
-		plugins: map[string]Auth{},
+		plugins: map[string]AuthPlugin{},
 	}
 }
 
-func (m *Manager) Register(a Auth) error {
-	name := a.name()
-	if name == defaultPlugin.name() {
-		return nil
-	}
-
-	if _, ok := m.plugins[name]; ok {
-		return fmt.Errorf("plugin %s is exists.", name)
-	}
-	m.plugins[name] = a
-	return nil
+func (m *Manager) Register(p AuthPlugin) {
+	m.plugins[p.Name()] = p
 }
 
-func (m *Manager) GetPlugin(c *context.Context) Auth {
+func (m *Manager) GetPlugin(c *context.Context) AuthPlugin {
 	for _, plugin := range m.plugins {
-		if plugin.is(c) {
+		if plugin.Is(c) {
 			return plugin
 		}
 	}
-	return defaultPlugin
-}
-
-func (m *Manager) Login(c *AuthController) bool {
-	if plugin := m.GetPlugin(c.Ctx); plugin != nil {
-		return plugin.login(c)
-	}
-	return defaultPlugin.login(c)
+	return nil
 }
 
 func (m *Manager) IsLogin(c *LoginRequiredController) *models.User {
 	if plugin := m.GetPlugin(c.Ctx); plugin != nil {
-		return plugin.isLogin(c)
+		return plugin.IsLogin(c)
 	}
-	return defaultPlugin.isLogin(c)
+	return nil
 }
 
-func (m *Manager) Logout(c *AuthController) bool {
+func (m *Manager) GoToLoginPage(c *LoginRequiredController) {
 	if plugin := m.GetPlugin(c.Ctx); plugin != nil {
-		return plugin.logout(c)
+		plugin.GoToLoginPage(c)
 	}
-	return defaultPlugin.logout(c)
 }
 
-func (m *Manager) GoHomePage(c *context.Context) bool {
-	if plugin := m.GetPlugin(c); plugin != nil {
-		return plugin.goHomePage(c)
+func (m *Manager) Login(c *AuthController) bool {
+	if plugin := m.GetPlugin(c.Ctx); plugin != nil {
+		return plugin.Login(c)
 	}
-	return defaultPlugin.goHomePage(c)
+	return false
 }
 
-func (m *Manager) GoLoginPage(c *context.Context, next string) bool {
-	if plugin := m.GetPlugin(c); plugin != nil {
-		return plugin.goLoginPage(c, next)
+func (m *Manager) Logout(c *AuthController) {
+	if plugin := m.GetPlugin(c.Ctx); plugin != nil {
+		plugin.Logout(c)
 	}
-	return defaultPlugin.goLoginPage(c, next)
 }
 
-var DefaultManager = NewManager()
+var DefaultManger = NewManager()

@@ -46,7 +46,7 @@ var initCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		orm.RunSyncdb("default", initForce, verbose)
 		ormer := orm.NewOrm()
-		admin := &models.User{Name: "admin", IsSuperuser: true}
+		admin := &models.User{Name: "admin", IsSuperman: true}
 		if err := ormer.Read(admin, "Name"); err == orm.ErrNoRows {
 			password := utils.RandString(6)
 			admin.SetPassword(password)
@@ -58,6 +58,7 @@ var initCmd = &cobra.Command{
 		} else {
 			beego.Informational("admin用户已存在, 跳过")
 		}
+
 		return nil
 	},
 }

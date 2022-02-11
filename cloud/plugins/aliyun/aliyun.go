@@ -38,16 +38,16 @@ func (a *AliCloud) TestConnect() error {
 
 func (a *AliCloud) statusTransform(status string) string {
 	statusMap := map[string]string{
-		"Running":  cloud.Running,
-		"Stopped":  cloud.Stopped,
-		"Starting": cloud.Starting,
-		"Stopping": cloud.Stopping,
+		"Running":  cloud.StatusRunning,
+		"Stopped":  cloud.StatusStopped,
+		"Starting": cloud.StatusRunning,
+		"Stopping": cloud.StatusStopping,
 	}
 
 	if text, ok := statusMap[status]; ok {
 		return text
 	}
-	return cloud.Unknow
+	return cloud.StatusUnknow
 }
 
 func (a *AliCloud) GetInstances() []*cloud.Instance {
@@ -80,12 +80,11 @@ func (a *AliCloud) GetInstances() []*cloud.Instance {
 			privateAddrs = append(privateAddrs, instance.VpcAttributes.PrivateIpAddress.IpAddress...)
 		}
 		instances[index] = &cloud.Instance{
-			Key:          instance.InstanceId,
 			UUID:         instance.SerialNumber,
 			Name:         instance.InstanceName,
 			OS:           instance.OSName,
 			CPU:          instance.Cpu,
-			Memory:       instance.Memory / 1024,
+			Mem:          int64(instance.Memory),
 			PublicAddrs:  publicAddrs,
 			PrivateAddrs: privateAddrs,
 			Status:       a.statusTransform(instance.Status),

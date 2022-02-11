@@ -1,69 +1,60 @@
-<form data-url="{{ urlfor `UserController.Modify` }}" data-target="datatable">
-    <input type="hidden" name="id" value="{{ .user.Id }}" />
+<form data-url="{{ urlfor `UserController.Modify` }}" data-callback="reload_table">
+    <input type="hidden" name="id" value="{{ .object.Id }}" />
     <div class="form-group row">
-        <label for="modify.name" class="col-sm-2 col-form-label">用户名<span class="text-danger"> * </span></label>
-        <div class="col-sm-10">
-            <input type="text" class="form-control" id="modify.name" name="name" placeholder="用户名" value="{{ .user.Name }}"/>
+        <label class="col-2 col-form-label" for="name">用户名<span class="text-danger"> * </span></label>
+        <div class="col-10">
+            <input class="form-control" type="text" id="name" name="name" placeholder="用户名" value="{{ .object.Name }}"/>
             <small class="form-text text-muted">
-                只能由长度位5-32位的英文字母、数字、下划线和中划线组成, 且必须唯一
+                只能由大小写英文、数字、下划线和中划线组成，长度为5~32位，且必须唯一
             </small>
         </div>
     </div>
     <div class="form-group row">
-        <label class="col-sm-2 col-form-label">性别</label>
-        <div class="col-sm-10">
-            <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" id="modify.male" name="gender" value="0" {{ if eq 0 .user.Gender }}checked="checked"{{ end }}/>
-                <label class="form-check-label" for="modify.male">男</label>
+        <label class="col-2 col-form-label">性别</label>
+        <div class="col-10">
+            <div class="custom-control custom-radio custom-control-inline">
+                <input type="radio" id="male" name="gender" class="custom-control-input" value="0" {{ if eq 0 .object.Gender }}checked="checked"{{ end }} />
+                <label class="custom-control-label" for="male">男</label>
             </div>
-            <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" id="modify.female" name="gender" value="1" {{ if eq 1 .user.Gender }}checked="checked"{{ end }}/>
-                <label class="form-check-label" for="modify.female">女</label>
+            <div class="custom-control custom-radio custom-control-inline">
+                <input type="radio" id="female" name="gender" class="custom-control-input" value="1" {{ if eq 1 .object.Gender }}checked="checked"{{ end }} />
+                <label class="custom-control-label" for="female">女</label>
             </div>
         </div>
     </div>
     <div class="form-group row">
-        <label for="modify.birthday" class="col-sm-2 col-form-label">出生日期</label>
-        <div class="col-sm-10" style="position: relative; ">
-            <input type="text" class="form-control" datepicker="datepicker" id="modify.birthday" name="birthday" placeholder="出生日期" value="{{ if .user.Birthday }}{{ date .user.Birthday `Y-m-d` }}{{ end }}"/>
+        <label class="col-2 col-form-label" for="birthday">出生日期</label>
+        <div class="col-10">
+            <input class="form-control" type="text" id="birthday" name="birthday" datepicker="datepicker" placeholder="出生日期" {{ if .object.Birthday }}value="{{ dateformat  .object.Birthday `2006-01-02` }}"{{ end }}/>
         </div>
     </div>
     <div class="form-group row">
-        <label for="modify.department" class="col-sm-2 col-form-label">部门</label>
-        <div class="col-sm-10">
-            <input type="text" class="form-control" id="modify.department" name="department" placeholder="部门" value="{{ .user.Department }}" />
+        <label class="col-2 col-form-label" for="tel">联系方式</label>
+        <div class="col-10">
+            <input class="form-control" type="text" id="tel" name="tel" placeholder="联系方式" value="{{ .object.Tel }}"/>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-2 col-form-label" for="email">邮箱</label>
+        <div class="col-10">
+            <input class="form-control" type="text" id="email" name="email" placeholder="邮箱" value="{{ .object.Email }}"/>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-2 col-form-label" for="addr">住址</label>
+        <div class="col-10">
+            <textarea class="form-control" id="addr" name="addr" rows="3" placeholder="住址">{{ .object.Addr }}</textarea>
             <small class="form-text text-muted">
-                必须为0-64位长度的字符串
+                长度为0~512位
             </small>
         </div>
     </div>
     <div class="form-group row">
-        <label for="modify.tel" class="col-sm-2 col-form-label">电话<span class="text-danger"> * </span></label>
-        <div class="col-sm-10">
-            <input type="text" class="form-control" id="modify.tel" name="tel" placeholder="电话" value="{{ .user.Tel }}" />
-        </div>
-    </div>
-    <div class="form-group row">
-        <label for="modify.email" class="col-sm-2 col-form-label">邮箱<span class="text-danger"> * </span></label>
-        <div class="col-sm-10">
-            <input type="text" class="form-control" id="modify.email" name="email" placeholder="邮箱" value="{{ .user.Email }}"/>
-        </div>
-    </div>
-    <div class="form-group row">
-        <label for="modify.addr" class="col-sm-2 col-form-label">住址</label>
-        <div class="col-sm-10">
-            <input type="text" class="form-control" id="modify.addr" name="addr" placeholder="住址" value="{{ .user.Addr }}"/>
+        <label class="col-2 col-form-label" for="remark">备注</label>
+        <div class="col-10">
+            <textarea class="form-control" id="remark" name="remark" rows="3" placeholder="备注">{{ .object.Remark }}</textarea>
             <small class="form-text text-muted">
-                必须为0-512位长度的字符串
-            </small>
-        </div>
-    </div>
-    <div class="form-group row">
-        <label for="modify.remark" class="col-sm-2 col-form-label">备注</label>
-        <div class="col-sm-10">
-            <textarea class="form-control" id="modify.remark" name="remark" rows="3" placeholder="备注">{{ .user.Remark }}</textarea>
-            <small class="form-text text-muted">
-                必须为0-512位长度的字符串
+                长度为0~512位
             </small>
         </div>
     </div>

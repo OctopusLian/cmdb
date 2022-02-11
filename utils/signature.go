@@ -3,7 +3,7 @@
  * @Author: neozhang
  * @Date: 2022-01-23 19:09:29
  * @LastEditors: neozhang
- * @LastEditTime: 2022-01-23 19:09:30
+ * @LastEditTime: 2022-02-11 13:35:07
  */
 package utils
 
@@ -44,4 +44,17 @@ func TencentAPISignature(secretId, secretKey, host, service, body string, now ti
 	//计算认证信息
 	return fmt.Sprintf("%s Credential=%s/%s, SignedHeaders=%s, Signature=%s", algorithm, secretId, credentialScope, signedHeaders, signature)
 
+}
+
+//TODO
+func HS256(string, string) string {
+	return ""
+}
+
+func HS256Hex(string, string) string {
+	return ""
+}
+
+func Sha256Hex(string) string {
+	return ""
 }

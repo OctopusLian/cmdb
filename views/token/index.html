@@ -1,27 +1,21 @@
-<table class="table table-hover table-bordered" id="datatable">
+<table class="table">
     <thead>
         <tr>
             <th>AccessKey</th>
             <th>SecrectKey</th>
-            <th></th>
+            <th>操作</th>
         </tr>
     </thead>
     <tbody>
-        {{ range .tokens }}
         <tr>
-            <td>{{ .AccessKey }}</td>
-            <td>{{ .SecrectKey }}</td>
-            <td>
-                <a title="更换Token" class="btn btn-sm btn-warning btn-token"  href="javascript:void(0);"><i class="fa fa-refresh" aria-hidden="true"></i></a>
-            </td>
-        </tr>
+        {{ if .object.Token }}
+            <td>{{ .object.Token.AccessKey }}</td>
+            <td>{{ .object.Token.SecrectKey }}</td>
+            <td><a href="javascript:void(0);" class="btn-token" data-pk="{{ .object.Id }}">更新</a></td>
         {{ else }}
-            <tr>
-                <td colspan="2">暂无Token</td>
-                <td>
-                    <a title="生成Token" class="btn btn-sm btn-primary btn-token" href="javascript:void(0);"><i class="fa fa-plus" aria-hidden="true"></i></a>
-                </td>
-            </tr>
+            <td colspan="2">暂无token</td>
+            <td><a href="javascript:void(0);" class="btn-token" data-pk="{{ .object.Id }}">生成</a></td>
         {{ end }}
+        </tr>
     </tbody>
 </table>

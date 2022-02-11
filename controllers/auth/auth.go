@@ -2,20 +2,25 @@ package auth
 
 import (
 	"cmdb/controllers/base"
+
 	"cmdb/models"
 )
 
 type LoginRequiredController struct {
 	base.BaseController
+
 	User *models.User
 }
 
 func (c *LoginRequiredController) Prepare() {
 	c.BaseController.Prepare()
-	if user := DefaultManager.IsLogin(c); user == nil {
-		DefaultManager.GoLoginPage(c.Ctx, c.Ctx.Input.URL())
+
+	if user := DefaultManger.IsLogin(c); user == nil {
+		// 未登陆
+		DefaultManger.GoToLoginPage(c) // todo 需要修改参数
 		c.StopRun()
 	} else {
+		// 已登陆
 		c.User = user
 		c.Data["user"] = user
 	}
@@ -26,12 +31,9 @@ type AuthController struct {
 }
 
 func (c *AuthController) Login() {
-	if DefaultManager.Login(c) {
-		DefaultManager.GoHomePage(c.Ctx)
-	}
+	DefaultManger.Login(c)
 }
 
 func (c *AuthController) Logout() {
-	DefaultManager.Logout(c)
-	DefaultManager.GoLoginPage(c.Ctx, "")
+	DefaultManger.Logout(c)
 }

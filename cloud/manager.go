@@ -1,31 +1,29 @@
+/*
+ * @Description:
+ * @Author: neozhang
+ * @Date: 2022-01-23 10:26:43
+ * @LastEditors: neozhang
+ * @LastEditTime: 2022-02-11 13:16:39
+ */
 package cloud
 
-import "fmt"
-
 type Manager struct {
-	plugins map[string]Cloud
+	Plugins map[string]ICloud
 }
 
 func NewManager() *Manager {
 	return &Manager{
-		plugins: map[string]Cloud{},
+		Plugins: make(map[string]ICloud),
 	}
 }
 
-func (m *Manager) Register(c Cloud) error {
-	name := c.Name()
-	if _, ok := m.plugins[name]; ok {
-		return fmt.Errorf("plugin %s is exists.", name)
-	}
-	m.plugins[name] = c
-	return nil
+func (m *Manager) Register(c ICloud) {
+	m.Plugins[c.Type()] = c
 }
 
-func (m *Manager) Cloud(name string) (Cloud, error) {
-	if c, ok := m.plugins[name]; ok {
-		return c, nil
-	}
-	return nil, fmt.Errorf("cloud %s is not found", name)
+func (m *Manager) Cloud(typ string) (ICloud, bool) {
+	cloud, ok := m.Plugins[typ]
+	return cloud, ok
 }
 
 var DefaultManager = NewManager()

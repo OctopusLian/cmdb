@@ -1,19 +1,27 @@
 package models
 
 const (
-	statusUnlock = iota
-	statusLock
+	StatusUnlock = iota
+	StatusLock
 )
 
 const (
-	statusEnable = iota
-	statusDisable
+	AlarmTypeOffline = iota
+	AlarmTypeCPU
+	AlarmTypeRam
 )
 
 const (
-	statusNew = iota
-	statusDoing
-	statusComplete
-	statusSuccess
-	statusFailure
+	AlarmStatusNew = iota
+	AlarmStatusDoing
+	AlarmStatusComplete
+)
+
+const (
+	TaskStatusNew = iota
+	TaskStatusCancel
+	TaskStatusScheduling
+	TaskStatusExecing
+	TaskStatusSuccess
+	TaskStatusFailure
 )

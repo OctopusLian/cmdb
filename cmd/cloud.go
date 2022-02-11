@@ -1,8 +1,14 @@
+/*
+ * @Description:
+ * @Author: neozhang
+ * @Date: 2022-02-11 13:17:09
+ * @LastEditors: neozhang
+ * @LastEditTime: 2022-02-11 13:18:17
+ */
 package cmd
 
 import (
 	"fmt"
-	"strings"
 	"time"
 
 	"github.com/spf13/cobra"
@@ -12,6 +18,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 
 	"cmdb/cloud"
+	_ "cmdb/cloud/plugins"
 	"cmdb/models"
 )
 
@@ -44,47 +51,29 @@ var cloudCmd = &cobra.Command{
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		platform := new(models.Platform)
-		ormer := orm.NewOrm()
 		for now := range time.Tick(10 * time.Second) {
-			for _, pf := range platform.AllEnabled() {
-				go func(pf *models.Platform) {
-					beego.Debug(pf.Name)
-					sdk, err := cloud.DefaultManager.Cloud(pf.Type)
-					if err != nil {
-						beego.Error(err)
-						return
-					}
+			platforms, _, _ := models.DefaultCloudPlatformManager.Query("", 0, 0)
+			for _, platform := range platforms {
+				if !platform.IsEnable() {
+					continue
+				}
+				if sdk, ok := cloud.DefaultManager.Cloud(platform.Type); !ok {
+					beego.Error("云平台未注册")
+				} else {
+					sdk.Init(platform.Addr, platform.Region, platform.AccessKey, platform.SecrectKey)
 
-					sdk.Init(pf.Addr, pf.Key, pf.Secrect, pf.Region)
 					if err := sdk.TestConnect(); err != nil {
-						beego.Error(err)
-						return
-					}
-
-					for _, instance := range sdk.GetInstances() {
-						obj := &models.VirtualMachine{UUID: instance.UUID, Platform: pf}
-						if _, _, err := ormer.ReadOrCreate(obj, "UUID", "Platform"); err != nil {
-							beego.Error(err)
-							continue
+						beego.Error("测试链接失败:", err)
+						models.DefaultCloudPlatformManager.SyncInfo(platform, now, fmt.Sprintf("测试链接失败: %s", err.Error()))
+					} else {
+						for _, instance := range sdk.GetInstance() {
+							models.DefaultVirtualMachineManager.SyncInstance(instance, platform)
 						}
-						obj.Key = instance.Key
-						obj.Name = instance.Name
-						obj.OS = instance.OS
-						obj.CPU = instance.CPU
-						obj.Memory = instance.Memory
-						obj.PublicAddrs = strings.Join(instance.PublicAddrs, ",")
-						obj.PrivateAddrs = strings.Join(instance.PrivateAddrs, ",")
-						obj.Status = instance.Status
-						obj.VmCreatedTime = instance.CreatedTime
-						obj.VmExpiredTime = instance.ExpiredTime
-						ormer.Update(obj)
+						models.DefaultVirtualMachineManager.SyncInstanceStatus(now, platform)
+						models.DefaultCloudPlatformManager.SyncInfo(platform, now, "")
 					}
-					ormer.QueryTable(new(models.VirtualMachine)).Filter("platform__exact", pf).Filter("update_time__gte", now).Update(orm.Params{"delete_time": nil})
-					ormer.QueryTable(new(models.VirtualMachine)).Filter("platform__exact", pf).Filter("update_time__lt", now).Update(orm.Params{"delete_time": now})
-					pf.SyncTime = &now
-					ormer.Update(pf, "sync_time")
-				}(pf)
+				}
+
 			}
 		}
 		return nil

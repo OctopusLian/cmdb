@@ -46,20 +46,20 @@ func (t *TenantCloud) TestConnect() error {
 
 func (t *TenantCloud) statusTransform(status string) string {
 	statusMap := map[string]string{
-		"PENDING":       cloud.Pending,
-		"LAUNCH_FAILED": cloud.LaunchFailed,
-		"RUNNING":       cloud.Running,
-		"STOPPED":       cloud.Stopped,
-		"STARTING":      cloud.Starting,
-		"STOPPING":      cloud.Stopping,
-		"REBOOTING":     cloud.Rebooting,
-		"SHUTDOWN":      cloud.ShutDown,
-		"TERMINATING":   cloud.Terminating,
+		"PENDING":       cloud.StatusPending,
+		"LAUNCH_FAILED": cloud.StatusLaunchFailed,
+		"RUNNING":       cloud.StatusRunning,
+		"STOPPED":       cloud.StatusStopped,
+		"STARTING":      cloud.StatusStarting,
+		"STOPPING":      cloud.StatusStopping,
+		"REBOOTING":     cloud.StatusRebooting,
+		"SHUTDOWN":      cloud.StatusShutdown,
+		"TERMINATING":   cloud.StatusTerminating,
 	}
 	if text, ok := statusMap[status]; ok {
 		return text
 	}
-	return cloud.Unknow
+	return cloud.StatusUnknow
 }
 
 func (t *TenantCloud) GetInstances() []*cloud.Instance {
@@ -87,12 +87,11 @@ func (t *TenantCloud) GetInstances() []*cloud.Instance {
 			privateAddrs[i] = *addr
 		}
 		instances[index] = &cloud.Instance{
-			Key:          *instance.InstanceId,
 			UUID:         *instance.Uuid,
 			Name:         *instance.InstanceName,
 			OS:           *instance.OsName,
 			CPU:          int(*instance.CPU),
-			Memory:       int(*instance.Memory),
+			Mem:          *instance.Memory * 1024,
 			PublicAddrs:  publicAddrs,
 			PrivateAddrs: privateAddrs,
 			Status:       t.statusTransform(*instance.InstanceState),

@@ -1,11 +1,6 @@
 package base
 
 import (
-	"fmt"
-	"strings"
-
-	"cmdb/utils"
-
 	"github.com/astaxie/beego"
 )
 
@@ -14,7 +9,5 @@ type BaseController struct {
 }
 
 func (c *BaseController) Prepare() {
-	controller, action := c.GetControllerAndAction()
-	controller, action = strings.TrimSuffix(utils.Snake(controller), "_controller"), utils.Snake(action)
-	c.TplName = fmt.Sprintf("%s/%s.%s", controller, action, "html")
+	c.Data["xsrf_token"] = c.XSRFToken()
 }

@@ -1,86 +1,77 @@
-<form data-url="{{ urlfor `UserController.Create` }}" data-target="datatable">
+<form data-url="{{ urlfor `UserController.Create` }}" data-callback="reload_table">
     <div class="form-group row">
-        <label for="create.name" class="col-sm-2 col-form-label">用户名<span class="text-danger"> * </span></label>
-        <div class="col-sm-10">
-            <input type="text" class="form-control" id="create.name" name="name" placeholder="用户名" />
+        <label class="col-2 col-form-label" for="name">用户名<span class="text-danger"> * </span></label>
+        <div class="col-10">
+            <input class="form-control" type="text" id="name" name="name" placeholder="用户名"/>
             <small class="form-text text-muted">
-                只能由长度位5-32位的英文字母、数字、下划线和中划线组成, 且必须唯一
+                只能由大小写英文、数字、下划线和中划线组成，长度为5~32位，且必须唯一
             </small>
         </div>
     </div>
     <div class="form-group row">
-        <label for="create.password" class="col-sm-2 col-form-label">密码<span class="text-danger"> * </span></label>
-        <div class="col-sm-10">
-            <input type="password" class="form-control" id="create.password" name="password" placeholder="密码" />
+        <label class="col-2 col-form-label" for="password">密码<span class="text-danger"> * </span></label>
+        <div class="col-10">
+            <input class="form-control" type="password" id="password" name="password" placeholder="密码"/>
             <small class="form-text text-muted">
-                必须是6-32位长度的字符串
+                长度必须为6~32位
             </small>
         </div>
     </div>
     <div class="form-group row">
-        <label for="create.passwordVerify" class="col-sm-2 col-form-label">确认密码</label>
-        <div class="col-sm-10">
-            <input type="password" class="form-control" id="create.passwordVerify" name="passwordVerify" placeholder="确认密码" />
+        <label class="col-2 col-form-label" for="passwordVerify">确认密码<span class="text-danger"> * </span></label>
+        <div class="col-10">
+            <input class="form-control" type="password" id="passwordVerify" name="passwordVerify" placeholder="确认密码"/>
             <small class="form-text text-muted">
-                必须与输入密码相同
+                两次密码必须相同
             </small>
         </div>
     </div>
     <div class="form-group row">
-        <label class="col-sm-2 col-form-label">性别</label>
-        <div class="col-sm-10">
-            <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" id="create.male" name="gender" value="0" checked="checked"/>
-                <label class="form-check-label" for="create.male">男</label>
+        <label class="col-2 col-form-label">性别</label>
+        <div class="col-10">
+            <div class="custom-control custom-radio custom-control-inline">
+                <input type="radio" id="male" name="gender" class="custom-control-input" value="0" checked="checked" />
+                <label class="custom-control-label" for="male">男</label>
             </div>
-            <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" id="create.female" name="gender" value="1" />
-                <label class="form-check-label" for="create.female">女</label>
+            <div class="custom-control custom-radio custom-control-inline">
+                <input type="radio" id="female" name="gender" class="custom-control-input" value="1" />
+                <label class="custom-control-label" for="female">女</label>
             </div>
         </div>
     </div>
     <div class="form-group row">
-        <label for="create.birthday" class="col-sm-2 col-form-label">出生日期</label>
-        <div class="col-sm-10" style="position: relative; ">
-            <input type="text" class="form-control" datepicker="datepicker" id="create.birthday" name="birthday" placeholder="出生日期"/>
+        <label class="col-2 col-form-label" for="birthday">出生日期</label>
+        <div class="col-10">
+            <input class="form-control" type="text" id="birthday" name="birthday" datepicker="datepicker" placeholder="出生日期"/>
         </div>
     </div>
     <div class="form-group row">
-        <label for="create.department" class="col-sm-2 col-form-label">部门</label>
-        <div class="col-sm-10">
-            <input type="text" class="form-control" id="create.department" name="department" placeholder="部门" />
+        <label class="col-2 col-form-label" for="tel">联系方式</label>
+        <div class="col-10">
+            <input class="form-control" type="text" id="tel" name="tel" placeholder="联系方式"/>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-2 col-form-label" for="email">邮箱</label>
+        <div class="col-10">
+            <input class="form-control" type="text" id="email" name="email" placeholder="邮箱"/>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-2 col-form-label" for="addr">住址</label>
+        <div class="col-10">
+            <textarea class="form-control" id="addr" name="addr" rows="3" placeholder="住址"></textarea>
             <small class="form-text text-muted">
-                必须为0-64位长度的字符串
+                长度为0~512位
             </small>
         </div>
     </div>
     <div class="form-group row">
-        <label for="create.tel" class="col-sm-2 col-form-label">电话<span class="text-danger"> * </span></label>
-        <div class="col-sm-10">
-            <input type="text" class="form-control" id="create.tel" name="tel" placeholder="电话" />
-        </div>
-    </div>
-    <div class="form-group row">
-        <label for="create.email" class="col-sm-2 col-form-label">邮箱<span class="text-danger"> * </span></label>
-        <div class="col-sm-10">
-            <input type="text" class="form-control" id="create.email" name="email" placeholder="邮箱" />
-        </div>
-    </div>
-    <div class="form-group row">
-        <label for="create.addr" class="col-sm-2 col-form-label">住址</label>
-        <div class="col-sm-10">
-            <input type="text" class="form-control" id="create.addr" name="addr" placeholder="住址" />
+        <label class="col-2 col-form-label" for="remark">备注</label>
+        <div class="col-10">
+            <textarea class="form-control" id="remark" name="remark" rows="3" placeholder="备注"></textarea>
             <small class="form-text text-muted">
-                必须为0-512位长度的字符串
-            </small>
-        </div>
-    </div>
-    <div class="form-group row">
-        <label for="create.remark" class="col-sm-2 col-form-label">备注</label>
-        <div class="col-sm-10">
-            <textarea class="form-control" id="create.remark" name="remark" rows="3" placeholder="备注"></textarea>
-            <small class="form-text text-muted">
-                必须为0-512位长度的字符串
+                长度为0~512位
             </small>
         </div>
     </div>

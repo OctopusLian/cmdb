@@ -6,11 +6,12 @@ import (
 )
 
 func RandString(length int) string {
-	letters := "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWSYZ0123456789"
-	len := len(letters)
+	letters := "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_"
+	count := len(letters)
 	chars := make([]byte, length)
 	for i := 0; i < length; i++ {
-		chars[i] = letters[rand.Int()%len]
+		chars[i] = letters[rand.Int()%count]
+		// rand.Intn(count)
 	}
 	return string(chars)
 }

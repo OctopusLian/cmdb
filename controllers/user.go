@@ -3,13 +3,11 @@ package controllers
 import (
 	"strings"
 
-	"github.com/astaxie/beego/orm"
-	"github.com/astaxie/beego/validation"
-
 	"cmdb/controllers/auth"
 	"cmdb/forms"
 	"cmdb/models"
-	"cmdb/utils"
+
+	"github.com/astaxie/beego/validation"
 )
 
 type UserPageController struct {
@@ -17,8 +15,10 @@ type UserPageController struct {
 }
 
 func (c *UserPageController) Index() {
-	c.Data["expand"] = "system_management"
 	c.Data["menu"] = "user_management"
+	c.Data["expand"] = "system_management"
+	c.TplName = "user_page/index.html"
+	c.LayoutSections["LayoutScript"] = "user_page/index.script.html"
 }
 
 type UserController struct {
@@ -26,42 +26,22 @@ type UserController struct {
 }
 
 func (c *UserController) List() {
-	query := strings.TrimSpace(c.GetString("q"))
+	//draw,start, length, q
 	draw, _ := c.GetInt("draw")
-	start, _ := c.GetInt("start")
+	start, _ := c.GetInt64("start")
 	length, _ := c.GetInt("length")
+	q := strings.TrimSpace(c.GetString("q"))
 
-	qs := orm.NewOrm().QueryTable("user")
-
-	cond := orm.NewCondition()
-	cond = cond.And("delete_time__isnull", true)
-
-	total, _ := qs.SetCond(cond).Count()
-
-	qtotal := total
-	if query != "" {
-		queryCond := orm.NewCondition()
-		queryCond = queryCond.Or("name__icontains", query)
-		queryCond = queryCond.Or("department__icontains", query)
-		queryCond = queryCond.Or("tel__icontains", query)
-		queryCond = queryCond.Or("email__icontains", query)
-		queryCond = queryCond.Or("addr__icontains", query)
-		queryCond = queryCond.Or("remark__icontains", query)
-		queryCond = queryCond.Or("department__icontains", query)
-		cond = cond.AndCond(queryCond)
-		qtotal, _ = qs.SetCond(cond).Count()
-	}
-
-	var users []*models.User
-	qs.SetCond(cond).Limit(length).Offset(start).All(&users)
+	// []*User, total, queryTotal
+	users, total, queryTotal := models.DefaultUserManager.Query(q, start, length)
 
 	c.Data["json"] = map[string]interface{}{
 		"code":            200,
-		"text":            "成功",
+		"text":            "获取成功",
+		"result":          users,
 		"draw":            draw,
 		"recordsTotal":    total,
-		"recordsFiltered": qtotal,
-		"result":          users,
+		"recordsFiltered": queryTotal,
 	}
 	c.ServeJSON()
 }
@@ -80,20 +60,8 @@ func (c *UserController) Create() {
 				valid.SetError("error", err.Error())
 				json["result"] = valid.Errors
 			} else if ok {
-				ormer := orm.NewOrm()
-
-				user := &models.User{
-					Name:       form.Name,
-					Gender:     form.Gender,
-					Birthday:   &form.Birthday,
-					Department: form.Department,
-					Tel:        form.Tel,
-					Email:      form.Email,
-					Addr:       form.Addr,
-					Remark:     form.Remark,
-				}
-				user.SetPassword(form.Password)
-				if _, err := ormer.Insert(user); err == nil {
+				user, err := models.DefaultUserManager.Create(form.Name, form.Password, form.Gender, form.BirthdayTime, form.Tel, form.Email, form.Addr, form.Remark)
+				if err == nil {
 					json = map[string]interface{}{
 						"code":   200,
 						"text":   "创建成功",
@@ -112,95 +80,12 @@ func (c *UserController) Create() {
 			valid.SetError("error", err.Error())
 			json["result"] = valid.Errors
 		}
-
 		c.Data["json"] = json
 		c.ServeJSON()
 	} else {
+		//get
 		c.TplName = "user/create.html"
 	}
-
-}
-
-func (c *UserController) Lock() {
-	json := map[string]interface{}{
-		"code": 405,
-		"text": "请求方式错误",
-	}
-	if c.Ctx.Input.IsPost() {
-		json = map[string]interface{}{
-			"code": 400,
-			"text": "请求数据错误",
-		}
-		if pk, err := c.GetInt("pk"); err == nil {
-			user := &models.User{Id: pk}
-			ormer := orm.NewOrm()
-			if ormer.Read(user) == nil {
-				user.Lock(true)
-				ormer.Update(user, "Status")
-				json = map[string]interface{}{
-					"code": 200,
-					"text": "锁定成功",
-				}
-			}
-		}
-	}
-
-	c.Data["json"] = json
-	c.ServeJSON()
-}
-
-func (c *UserController) Unlock() {
-	json := map[string]interface{}{
-		"code": 405,
-		"text": "请求方式错误",
-	}
-	if c.Ctx.Input.IsPost() {
-		json = map[string]interface{}{
-			"code": 400,
-			"text": "请求数据错误",
-		}
-		if pk, err := c.GetInt("pk"); err == nil {
-			user := &models.User{Id: pk}
-			ormer := orm.NewOrm()
-			if ormer.Read(user) == nil {
-				user.Lock(false)
-				ormer.Update(user, "Status")
-				json = map[string]interface{}{
-					"code": 200,
-					"text": "解锁成功",
-				}
-			}
-		}
-		c.Data["json"] = json
-		c.ServeJSON()
-	}
-
-	c.Data["json"] = map[string]interface{}{
-		"code": 405,
-		"text": "提交方式错误",
-	}
-	c.ServeJSON()
-}
-
-func (c *UserController) Detail() {
-	json := map[string]interface{}{
-		"code": 400,
-		"text": "请求数据错误",
-	}
-	if pk, err := c.GetInt("pk"); err == nil {
-		user := &models.User{Id: pk}
-		ormer := orm.NewOrm()
-		if ormer.Read(user) == nil {
-			json = map[string]interface{}{
-				"code":   200,
-				"text":   "获取成功",
-				"result": user,
-			}
-		}
-	}
-
-	c.Data["json"] = json
-	c.ServeJSON()
 }
 
 func (c *UserController) Modify() {
@@ -216,24 +101,13 @@ func (c *UserController) Modify() {
 				valid.SetError("error", err.Error())
 				json["result"] = valid.Errors
 			} else if ok {
-				ormer := orm.NewOrm()
+				user, err := models.DefaultUserManager.Modify(form.Id, form.Name, form.Gender, form.BirthdayTime, form.Tel, form.Email, form.Addr, form.Remark)
 
-				user := &models.User{Id: form.Id}
-				if ormer.Read(user) == nil {
-					user.Name = form.Name
-					user.Gender = form.Gender
-					user.Birthday = &form.Birthday
-					user.Department = form.Department
-					user.Tel = form.Tel
-					user.Email = form.Email
-					user.Addr = form.Addr
-					user.Remark = form.Remark
-					if _, err := ormer.Update(user); err == nil {
-						json = map[string]interface{}{
-							"code":   200,
-							"text":   "更新成功",
-							"result": user,
-						}
+				if err == nil {
+					json = map[string]interface{}{
+						"code":   200,
+						"text":   "更新成功",
+						"result": user,
 					}
 				} else {
 					json = map[string]interface{}{
@@ -250,48 +124,70 @@ func (c *UserController) Modify() {
 		}
 		c.Data["json"] = json
 		c.ServeJSON()
+
 	} else {
-		user := &models.User{Id: -1}
-		if pk, err := c.GetInt("pk"); err == nil {
-			user.Id = pk
-			orm.NewOrm().Read(user)
-		}
+		//get
+		pk, _ := c.GetInt("pk")
 		c.TplName = "user/modify.html"
-		c.Data["user"] = user
+		c.Data["object"] = models.DefaultUserManager.GetById(pk)
 	}
 }
 
 func (c *UserController) Delete() {
-	json := map[string]interface{}{
-		"code": 405,
-		"text": "请求方式错误",
-	}
-	if c.Ctx.Input.IsPost() {
-		json = map[string]interface{}{
-			"code": 400,
-			"text": "请求数据错误",
+	pk, _ := c.GetInt("pk")
+	if pk != c.User.Id {
+		models.DefaultUserManager.DeleteById(pk)
+		c.Data["json"] = map[string]interface{}{
+			"code":   200,
+			"text":   "删除成功",
+			"result": nil, //可以返回删除的用户
 		}
-		if pk, err := c.GetInt("pk"); err == nil {
-			user := &models.User{Id: pk}
-			ormer := orm.NewOrm()
-			if ormer.Read(user) == nil {
-				user.Delete()
-				if _, err := ormer.Update(user, "delete_time"); err == nil {
-					json = map[string]interface{}{
-						"code": 200,
-						"text": "删除成功",
-					}
-				} else {
-					json = map[string]interface{}{
-						"code": 500,
-						"text": "服务器错误",
-					}
-				}
-			}
+	} else {
+		c.Data["json"] = map[string]interface{}{
+			"code":   400,
+			"text":   "当前用户不能删除自己",
+			"result": nil, //可以返回删除的用户
 		}
 	}
 
-	c.Data["json"] = json
+	c.ServeJSON()
+}
+
+func (c *UserController) Lock() {
+	pk, _ := c.GetInt("pk")
+	if pk != c.User.Id {
+		models.DefaultUserManager.SetStatusById(pk, 1)
+		c.Data["json"] = map[string]interface{}{
+			"code":   200,
+			"text":   "锁定成功",
+			"result": nil, //可以返回删除的用户
+		}
+	} else {
+		c.Data["json"] = map[string]interface{}{
+			"code":   400,
+			"text":   "当前用户不能锁定自己",
+			"result": nil, //可以返回删除的用户
+		}
+	}
+	c.ServeJSON()
+}
+
+func (c *UserController) UnLock() {
+	pk, _ := c.GetInt("pk")
+	if pk != c.User.Id {
+		models.DefaultUserManager.SetStatusById(pk, 0)
+		c.Data["json"] = map[string]interface{}{
+			"code":   200,
+			"text":   "解锁成功",
+			"result": nil, //可以返回删除的用户
+		}
+	} else {
+		c.Data["json"] = map[string]interface{}{
+			"code":   400,
+			"text":   "当前用户不能解锁自己",
+			"result": nil, //可以返回删除的用户
+		}
+	}
 	c.ServeJSON()
 }
 
@@ -309,9 +205,8 @@ func (c *UserController) Password() {
 				valid.SetError("error", err.Error())
 				json["result"] = valid.Errors
 			} else if ok {
-				ormer := orm.NewOrm()
-				c.User.SetPassword(form.Password)
-				if _, err := ormer.Update(c.User, "Password"); err == nil {
+				err := models.DefaultUserManager.UpdatePassword(c.User.Id, form.Password)
+				if err == nil {
 					json = map[string]interface{}{
 						"code": 200,
 						"text": "修改密码成功",
@@ -341,64 +236,41 @@ type TokenController struct {
 	auth.LoginRequiredController
 }
 
-func (c *TokenController) List() {
-	qs := orm.NewOrm().QueryTable("token")
-
-	cond := orm.NewCondition()
-	cond = cond.And("delete_time__isnull", true)
-
-	var tokens []*models.Token
-	qs.Filter("delete_time__isnull", true).Filter("create_user__exact", c.User.Id).All(&tokens)
-
-	c.Data["json"] = map[string]interface{}{
-		"code":   200,
-		"text":   "成功",
-		"result": tokens,
-	}
-	c.ServeJSON()
-}
-
 func (c *TokenController) Generate() {
 	if c.Ctx.Input.IsPost() {
-		json := map[string]interface{}{
-			"code": 400,
-			"text": "提交数据错误",
-		}
+		// pk, _ := c.GetInt("pk")
+		// // 方法1： 判断pk是否等于自己
+		// if pk == c.User.Id {
+		// 	models.DefaultTokenManager.GenerateByUser(models.DefaultUserManager.GetById(pk))
+		// 	c.Data["json"] = map[string]interface{}{
+		// 		"code":   200,
+		// 		"text":   "生成Token成功",
+		// 		"result": nil, //可以返回Token
+		// 	}
+		// } else {
+		// 	c.Data["json"] = map[string]interface{}{
+		// 		"code":   400,
+		// 		"text":   "只能对自己的Token进行生成",
+		// 		"result": nil, //可以返回Token
+		// 	}
+		// }
 
-		token := &models.Token{CreateUser: c.User.Id}
-		ormer := orm.NewOrm()
-		valid := &validation.Validation{}
-		if _, _, err := ormer.ReadOrCreate(token, "create_user"); err != nil {
-			valid.SetError("error", err.Error())
-			json["result"] = valid.Errors
-		} else {
-			token.AccessKey = utils.RandString(64)
-			token.SecrectKey = utils.RandString(64)
-			if _, err := ormer.Update(token); err == nil {
-				json = map[string]interface{}{
-					"code":   200,
-					"text":   "生成Token成功",
-					"result": token,
-				}
-			} else {
-				json = map[string]interface{}{
-					"code": 500,
-					"text": "服务器错误",
-				}
-			}
+		// 方法2：获取c.User操作
+		models.DefaultTokenManager.GenerateByUser(c.User)
+		c.Data["json"] = map[string]interface{}{
+			"code":   200,
+			"text":   "生成Token成功",
+			"result": nil, //可以返回Token
 		}
-		c.Data["json"] = json
 		c.ServeJSON()
 	} else {
-		qs := orm.NewOrm().QueryTable("token")
-
-		cond := orm.NewCondition()
-		cond = cond.And("delete_time__isnull", true)
-
-		var tokens []*models.Token
-		qs.Filter("delete_time__isnull", true).Filter("create_user__exact", c.User.Id).All(&tokens)
-		c.Data["tokens"] = tokens
+		// pk, _ := c.GetInt("pk")
+		// // 方法1： 判断pk是否等于自己
+		// if pk == c.User.Id {
+		// 	c.Data["object"] = models.DefaultUserManager.GetById(pk)
+		// }
+		// 方法2：获取c.User.Id
+		c.Data["object"] = models.DefaultUserManager.GetById(c.User.Id)
 		c.TplName = "token/index.html"
 	}
-
 }
