@@ -2,6 +2,7 @@ package tenant
 
 import (
 	"cmdb/cloud"
+	"fmt"
 
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common/profile"
@@ -9,43 +10,69 @@ import (
 )
 
 type TenantCloud struct {
-	Addr       string
-	Key        string
-	Secrect    string
-	Region     string
+	addr       string
+	region     string
+	accessKey  string
+	secrectKey string
 	credential *common.Credential
 	profile    *profile.ClientProfile
 }
 
-func (t *TenantCloud) Name() string {
-	return "tenantyun"
+func (c *TenantCloud) Type() string {
+	return "tenant"
 }
 
-func (t *TenantCloud) Init(addr string, key string, secrect string, region string) {
-	t.Addr = addr
-	t.Key = key
-	t.Secrect = secrect
-	t.Region = region
-
-	t.credential = common.NewCredential(key, secrect)
-
-	t.profile = profile.NewClientProfile()
-	t.profile.HttpProfile.Endpoint = addr
-
+func (c *TenantCloud) Name() string {
+	return "腾讯云"
 }
 
-func (t *TenantCloud) TestConnect() error {
-	client, err := cvm.NewClient(t.credential, t.Region, t.profile)
-	if err == nil {
-		request := cvm.NewDescribeRegionsRequest()
-		_, err = client.DescribeRegions(request)
+func (c *TenantCloud) Init(addr, region, accessKey, secrectKey string) {
+	c.addr = addr
+	c.region = region
+	c.accessKey = accessKey
+	c.secrectKey = secrectKey
+
+	c.credential = common.NewCredential(c.accessKey, c.secrectKey)
+	c.profile = profile.NewClientProfile()
+	c.profile.HttpProfile.Endpoint = c.addr
+}
+
+func (c *TenantCloud) TestConnect() error {
+	client, err := cvm.NewClient(c.credential, c.region, c.profile)
+	if err != nil {
+		fmt.Println(err)
+		return err
 	}
-
+	request := cvm.NewDescribeRegionsRequest()
+	_, err = client.DescribeRegions(request)
+	fmt.Println(err)
 	return err
 }
 
-func (t *TenantCloud) statusTransform(status string) string {
-	statusMap := map[string]string{
+func (c *TenantCloud) GetInstance() []*cloud.Instance {
+	var (
+		offset int64 = 0
+		limit  int64 = 100
+		total  int64 = 1
+		rt     []*cloud.Instance
+	)
+
+	for offset < total {
+		var instances []*cloud.Instance
+		total, instances = c.getInstanceByOffsetLimit(offset, limit)
+		// 判断第一次请求初始化rt
+		if offset == 0 {
+			rt = make([]*cloud.Instance, 0, total)
+		}
+		rt = append(rt, instances...)
+		offset += limit
+	}
+
+	return rt
+}
+
+func (c *TenantCloud) transformStatus(status string) string {
+	smap := map[string]string{
 		"PENDING":       cloud.StatusPending,
 		"LAUNCH_FAILED": cloud.StatusLaunchFailed,
 		"RUNNING":       cloud.StatusRunning,
@@ -56,81 +83,101 @@ func (t *TenantCloud) statusTransform(status string) string {
 		"SHUTDOWN":      cloud.StatusShutdown,
 		"TERMINATING":   cloud.StatusTerminating,
 	}
-	if text, ok := statusMap[status]; ok {
-		return text
+
+	if rt, ok := smap[status]; ok {
+		return rt
 	}
 	return cloud.StatusUnknow
 }
 
-func (t *TenantCloud) GetInstances() []*cloud.Instance {
-	var limit int64 = 100
-	client, err := cvm.NewClient(t.credential, t.Region, t.profile)
+func (c *TenantCloud) getInstanceByOffsetLimit(offset, limit int64) (int64, []*cloud.Instance) {
+	client, err := cvm.NewClient(c.credential, c.region, c.profile)
 	if err != nil {
-		return nil
+		// 通过log记录
+		return 0, nil
 	}
 
 	request := cvm.NewDescribeInstancesRequest()
 	request.Limit = &limit
+	request.Offset = &offset
+
 	response, err := client.DescribeInstances(request)
 	if err != nil {
-		return nil
+		// 通过log记录
+		return 0, nil
 	}
 
-	instances := make([]*cloud.Instance, *response.Response.TotalCount)
-	for index, instance := range response.Response.InstanceSet {
+	//总数
+	total := *response.Response.TotalCount
+	instances := response.Response.InstanceSet
+
+	rt := make([]*cloud.Instance, len(instances))
+
+	for index, instance := range instances {
 		publicAddrs := make([]string, len(instance.PublicIpAddresses))
 		privateAddrs := make([]string, len(instance.PrivateIpAddresses))
-		for i, addr := range instance.PublicIpAddresses {
-			publicAddrs[i] = *addr
+		for index, addr := range instance.PublicIpAddresses {
+			publicAddrs[index] = *addr
 		}
-		for i, addr := range instance.PrivateIpAddresses {
-			privateAddrs[i] = *addr
+
+		for index, addr := range instance.PrivateIpAddresses {
+			privateAddrs[index] = *addr
 		}
-		instances[index] = &cloud.Instance{
-			UUID:         *instance.Uuid,
+
+		rt[index] = &cloud.Instance{
+			UUID:         *instance.InstanceId,
 			Name:         *instance.InstanceName,
 			OS:           *instance.OsName,
 			CPU:          int(*instance.CPU),
 			Mem:          *instance.Memory * 1024,
 			PublicAddrs:  publicAddrs,
 			PrivateAddrs: privateAddrs,
-			Status:       t.statusTransform(*instance.InstanceState),
+			Status:       c.transformStatus(*instance.InstanceState),
 			CreatedTime:  *instance.CreatedTime,
 			ExpiredTime:  *instance.ExpiredTime,
 		}
 	}
-	return instances
+
+	return total, rt
 }
 
-func (t *TenantCloud) StartInstance(uuid string) error {
-	client, err := cvm.NewClient(t.credential, t.Region, t.profile)
-	if err == nil {
-		request := cvm.NewStartInstancesRequest()
-		request.InstanceIds = []*string{&uuid}
-		_, err = client.StartInstances(request)
+func (c *TenantCloud) StartInstance(uuid string) error {
+	client, err := cvm.NewClient(c.credential, c.region, c.profile)
+	if err != nil {
+		return err
 	}
+
+	request := cvm.NewStartInstancesRequest()
+	request.InstanceIds = []*string{&uuid}
+
+	_, err = client.StartInstances(request)
 	return err
 }
 
-func (t *TenantCloud) StopInstance(uuid string) error {
-	client, err := cvm.NewClient(t.credential, t.Region, t.profile)
-
-	if err == nil {
-		request := cvm.NewStopInstancesRequest()
-		request.InstanceIds = []*string{&uuid}
-		_, err = client.StopInstances(request)
+func (c *TenantCloud) StopInstance(uuid string) error {
+	client, err := cvm.NewClient(c.credential, c.region, c.profile)
+	if err != nil {
+		return err
 	}
+
+	request := cvm.NewStopInstancesRequest()
+	request.InstanceIds = []*string{&uuid}
+
+	_, err = client.StopInstances(request)
 	return err
+
 }
 
-func (t *TenantCloud) RestartInstance(uuid string) error {
-	client, err := cvm.NewClient(t.credential, t.Region, t.profile)
-
-	if err == nil {
-		request := cvm.NewRebootInstancesRequest()
-		request.InstanceIds = []*string{&uuid}
-		_, err = client.RebootInstances(request)
+func (c *TenantCloud) RebootInstance(uuid string) error {
+	client, err := cvm.NewClient(c.credential, c.region, c.profile)
+	if err != nil {
+		return err
 	}
+
+	request := cvm.NewRebootInstancesRequest()
+	request.InstanceIds = []*string{&uuid}
+
+	_, err = client.RebootInstances(request)
 	return err
 }
 

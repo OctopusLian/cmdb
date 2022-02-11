@@ -8,133 +8,170 @@ import (
 	"github.com/aliyun/alibaba-cloud-sdk-go/sdk/requests"
 )
 
-type AliCloud struct {
-	Addr    string
-	Key     string
-	Secrect string
-	Region  string
+type Aliyun struct {
+	addr       string
+	region     string
+	accessKey  string
+	secrectKey string
 }
 
-func (a *AliCloud) Name() string {
+func (c *Aliyun) Type() string {
 	return "aliyun"
 }
 
-func (a *AliCloud) Init(addr string, key string, secrect string, region string) {
-	a.Addr = addr
-	a.Key = key
-	a.Secrect = secrect
-	a.Region = region
+func (c *Aliyun) Name() string {
+	return "阿里云"
 }
 
-func (a *AliCloud) TestConnect() error {
-	client, err := ecs.NewClientWithAccessKey(a.Region, a.Key, a.Secrect)
-	if err == nil {
-		request := ecs.CreateDescribeRegionsRequest()
-		request.Scheme = "https"
-		_, err = client.DescribeRegions(request)
+func (c *Aliyun) Init(addr, region, accessKey, secrectKey string) {
+	c.addr = addr
+	c.region = region
+	c.accessKey = accessKey
+	c.secrectKey = secrectKey
+}
+
+func (c *Aliyun) TestConnect() error {
+	client, err := ecs.NewClientWithAccessKey(c.region, c.accessKey, c.secrectKey)
+	if err != nil {
+		return err
 	}
+
+	request := ecs.CreateDescribeRegionsRequest()
+	request.Scheme = "https"
+
+	_, err = client.DescribeRegions(request)
 	return err
 }
 
-func (a *AliCloud) statusTransform(status string) string {
-	statusMap := map[string]string{
+func (c *Aliyun) GetInstance() []*cloud.Instance {
+	var (
+		offset int = 1
+		limit  int = 100
+		total  int = 2
+		rt     []*cloud.Instance
+	)
+
+	for offset < total {
+		var instances []*cloud.Instance
+		total, instances = c.getInstanceByOffsetLimit(offset, limit)
+		if offset == 1 {
+			rt = make([]*cloud.Instance, 0, total)
+		}
+		rt = append(rt, instances...)
+	}
+	return rt
+}
+
+func (c *Aliyun) transformStatus(status string) string {
+	smap := map[string]string{
 		"Running":  cloud.StatusRunning,
 		"Stopped":  cloud.StatusStopped,
-		"Starting": cloud.StatusRunning,
+		"Starting": cloud.StatusStarting,
 		"Stopping": cloud.StatusStopping,
 	}
 
-	if text, ok := statusMap[status]; ok {
-		return text
+	if rt, ok := smap[status]; ok {
+		return rt
 	}
 	return cloud.StatusUnknow
 }
 
-func (a *AliCloud) GetInstances() []*cloud.Instance {
-	var limit int = 100
-	client, err := ecs.NewClientWithAccessKey(a.Region, a.Key, a.Secrect)
+func (c *Aliyun) getInstanceByOffsetLimit(offset, limit int) (int, []*cloud.Instance) {
+	client, err := ecs.NewClientWithAccessKey(c.region, c.accessKey, c.secrectKey)
 	if err != nil {
-		return nil
+		return 0, nil
 	}
 
 	request := ecs.CreateDescribeInstancesRequest()
 	request.Scheme = "https"
-	request.PageSize = requests.NewInteger(limit)
+
+	request.PageNumber = requests.NewInteger(offset)
+	request.PageSize = requests.NewInteger(100)
 
 	response, err := client.DescribeInstances(request)
+	if err != nil {
+		return 0, nil
+	}
 
-	instances := make([]*cloud.Instance, response.TotalCount)
-	for index, instance := range response.Instances.Instance {
+	total := response.TotalCount
+	instances := response.Instances.Instance
+
+	rt := make([]*cloud.Instance, len(instances))
+
+	for index, instance := range instances {
 		publicAddrs := make([]string, 0)
-		if instance.EipAddress.IpAddress != "" {
+		privateAddrs := make([]string, 0)
+
+		if "" != instance.EipAddress.IpAddress {
 			publicAddrs = append(publicAddrs, instance.EipAddress.IpAddress)
 		}
-		if len(instance.PublicIpAddress.IpAddress) > 0 {
-			publicAddrs = append(publicAddrs, instance.PublicIpAddress.IpAddress...)
-		}
-		privateAddrs := make([]string, 0)
-		if len(instance.InnerIpAddress.IpAddress) > 0 {
-			privateAddrs = append(privateAddrs, instance.InnerIpAddress.IpAddress...)
-		}
-		if len(instance.VpcAttributes.PrivateIpAddress.IpAddress) > 0 {
-			privateAddrs = append(privateAddrs, instance.VpcAttributes.PrivateIpAddress.IpAddress...)
-		}
-		instances[index] = &cloud.Instance{
-			UUID:         instance.SerialNumber,
+		publicAddrs = append(publicAddrs, instance.PublicIpAddress.IpAddress...)
+
+		privateAddrs = append(privateAddrs, instance.InnerIpAddress.IpAddress...)
+		privateAddrs = append(instance.VpcAttributes.PrivateIpAddress.IpAddress)
+
+		rt[index] = &cloud.Instance{
+			UUID:         instance.InstanceId,
 			Name:         instance.InstanceName,
 			OS:           instance.OSName,
-			CPU:          instance.Cpu,
 			Mem:          int64(instance.Memory),
+			CPU:          instance.Cpu,
 			PublicAddrs:  publicAddrs,
 			PrivateAddrs: privateAddrs,
-			Status:       a.statusTransform(instance.Status),
+			Status:       c.transformStatus(instance.Status),
 			CreatedTime:  instance.CreationTime,
 			ExpiredTime:  instance.ExpiredTime,
 		}
 	}
-	return instances
+
+	return total, rt
 }
 
-func (a *AliCloud) StartInstance(uuid string) error {
-	client, err := ecs.NewClientWithAccessKey(a.Region, a.Key, a.Secrect)
-	if err == nil {
-		request := ecs.CreateStartInstanceRequest()
-		request.Scheme = "https"
-		request.InstanceId = uuid
-
-		_, err = client.StartInstance(request)
+func (c *Aliyun) StartInstance(uuid string) error {
+	client, err := ecs.NewClientWithAccessKey(c.region, c.accessKey, c.secrectKey)
+	if err != nil {
+		return err
 	}
 
+	request := ecs.CreateStartInstanceRequest()
+	request.Scheme = "https"
+
+	request.InstanceId = uuid
+
+	_, err = client.StartInstance(request)
 	return err
 }
 
-func (a *AliCloud) StopInstance(uuid string) error {
-	client, err := ecs.NewClientWithAccessKey(a.Region, a.Key, a.Secrect)
-	if err == nil {
-
-		request := ecs.CreateStopInstanceRequest()
-		request.Scheme = "https"
-		request.InstanceId = uuid
-
-		_, err = client.StopInstance(request)
+func (c *Aliyun) StopInstance(uuid string) error {
+	client, err := ecs.NewClientWithAccessKey(c.region, c.accessKey, c.secrectKey)
+	if err != nil {
+		return err
 	}
 
+	request := ecs.CreateStopInstanceRequest()
+	request.Scheme = "https"
+
+	request.InstanceId = uuid
+
+	_, err = client.StopInstance(request)
 	return err
 }
 
-func (a *AliCloud) RestartInstance(uuid string) error {
-	client, err := ecs.NewClientWithAccessKey(a.Region, a.Key, a.Secrect)
-	if err == nil {
-		request := ecs.CreateRebootInstanceRequest()
-		request.Scheme = "https"
-		request.InstanceId = uuid
-
-		_, err = client.RebootInstance(request)
+func (c *Aliyun) RebootInstance(uuid string) error {
+	client, err := ecs.NewClientWithAccessKey(c.region, c.accessKey, c.secrectKey)
+	if err != nil {
+		return err
 	}
 
+	request := ecs.CreateRebootInstanceRequest()
+	request.Scheme = "https"
+
+	request.InstanceId = uuid
+
+	_, err = client.RebootInstance(request)
 	return err
 }
 
 func init() {
-	cloud.DefaultManager.Register(new(AliCloud))
+	cloud.DefaultManager.Register(new(Aliyun))
 }
