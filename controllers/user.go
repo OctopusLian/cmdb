@@ -1,12 +1,15 @@
 package controllers
 
 import (
+	"net/http"
 	"strings"
 
 	"cmdb/controllers/auth"
 	"cmdb/forms"
 	"cmdb/models"
+	"cmdb/services"
 
+	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/validation"
 )
 
@@ -21,8 +24,17 @@ func (c *UserPageController) Index() {
 	c.LayoutSections["LayoutScript"] = "user_page/index.script.html"
 }
 
+//用户管理控制器
 type UserController struct {
-	auth.LoginRequiredController
+	auth.AuthController
+}
+
+//查询用户
+func (c *UserController) Query() {
+	q := c.GetString("q")
+	c.Data["users"] = services.UserService.Query(q)
+	c.Data["q"] = q
+	c.TplName = "user/query.html"
 }
 
 func (c *UserController) List() {
@@ -88,70 +100,99 @@ func (c *UserController) Create() {
 	}
 }
 
+//修改用户
 func (c *UserController) Modify() {
+	form := &forms.UserModifyForm{}
+	// GET 获取数据
+	// POST 修改用户
 	if c.Ctx.Input.IsPost() {
-		json := map[string]interface{}{
-			"code": 400,
-			"text": "提交数据错误",
-		}
-		form := &forms.UserModifyForm{}
-		valid := &validation.Validation{}
 		if err := c.ParseForm(form); err == nil {
-			if ok, err := valid.Valid(form); err != nil {
-				valid.SetError("error", err.Error())
-				json["result"] = valid.Errors
-			} else if ok {
-				user, err := models.DefaultUserManager.Modify(form.Id, form.Name, form.Gender, form.BirthdayTime, form.Tel, form.Email, form.Addr, form.Remark)
-
-				if err == nil {
-					json = map[string]interface{}{
-						"code":   200,
-						"text":   "更新成功",
-						"result": user,
-					}
-				} else {
-					json = map[string]interface{}{
-						"code": 500,
-						"text": "服务器错误",
-					}
-				}
-			} else {
-				json["result"] = valid.Errors
-			}
-		} else {
-			valid.SetError("error", err.Error())
-			json["result"] = valid.Errors
+			services.UserService.ModifyUser(form)
+			c.Redirect(beego.URLFor("UserController.Query"), http.StatusFound)
 		}
-		c.Data["json"] = json
-		c.ServeJSON()
-
-	} else {
-		//get
-		pk, _ := c.GetInt("pk")
-		c.TplName = "user/modify.html"
-		c.Data["object"] = models.DefaultUserManager.GetById(pk)
+	} else if pk, err := c.GetInt("pk"); err == nil {
+		if user := services.UserService.GetByPk(pk); user != nil {
+			form.Id = user.Id
+			form.Name = user.Name
+		}
 	}
+
+	c.Data["form"] = form
+	c.TplName = "user/modify.html"
 }
 
+//删除用户数据
 func (c *UserController) Delete() {
-	pk, _ := c.GetInt("pk")
-	if pk != c.User.Id {
-		models.DefaultUserManager.DeleteById(pk)
-		c.Data["json"] = map[string]interface{}{
-			"code":   200,
-			"text":   "删除成功",
-			"result": nil, //可以返回删除的用户
-		}
-	} else {
-		c.Data["json"] = map[string]interface{}{
-			"code":   400,
-			"text":   "当前用户不能删除自己",
-			"result": nil, //可以返回删除的用户
-		}
+	if pk, err := c.GetInt("pk"); err == nil && c.LoginUser.ID != pk {
+		services.UserService.DeleteUser(pk)
 	}
-
-	c.ServeJSON()
+	c.Redirect(beego.URLFor("UserController.Query"), http.StatusFound)
 }
+
+// func (c *UserController) Modify() {
+// 	if c.Ctx.Input.IsPost() {
+// 		json := map[string]interface{}{
+// 			"code": 400,
+// 			"text": "提交数据错误",
+// 		}
+// 		form := &forms.UserModifyForm{}
+// 		valid := &validation.Validation{}
+// 		if err := c.ParseForm(form); err == nil {
+// 			if ok, err := valid.Valid(form); err != nil {
+// 				valid.SetError("error", err.Error())
+// 				json["result"] = valid.Errors
+// 			} else if ok {
+// 				user, err := models.DefaultUserManager.Modify(form.Id, form.Name, form.Gender, form.BirthdayTime, form.Tel, form.Email, form.Addr, form.Remark)
+
+// 				if err == nil {
+// 					json = map[string]interface{}{
+// 						"code":   200,
+// 						"text":   "更新成功",
+// 						"result": user,
+// 					}
+// 				} else {
+// 					json = map[string]interface{}{
+// 						"code": 500,
+// 						"text": "服务器错误",
+// 					}
+// 				}
+// 			} else {
+// 				json["result"] = valid.Errors
+// 			}
+// 		} else {
+// 			valid.SetError("error", err.Error())
+// 			json["result"] = valid.Errors
+// 		}
+// 		c.Data["json"] = json
+// 		c.ServeJSON()
+
+// 	} else {
+// 		//get
+// 		pk, _ := c.GetInt("pk")
+// 		c.TplName = "user/modify.html"
+// 		c.Data["object"] = models.DefaultUserManager.GetById(pk)
+// 	}
+// }
+
+// func (c *UserController) Delete() {
+// 	pk, _ := c.GetInt("pk")
+// 	if pk != c.User.Id {
+// 		models.DefaultUserManager.DeleteById(pk)
+// 		c.Data["json"] = map[string]interface{}{
+// 			"code":   200,
+// 			"text":   "删除成功",
+// 			"result": nil, //可以返回删除的用户
+// 		}
+// 	} else {
+// 		c.Data["json"] = map[string]interface{}{
+// 			"code":   400,
+// 			"text":   "当前用户不能删除自己",
+// 			"result": nil, //可以返回删除的用户
+// 		}
+// 	}
+
+// 	c.ServeJSON()
+// }
 
 func (c *UserController) Lock() {
 	pk, _ := c.GetInt("pk")

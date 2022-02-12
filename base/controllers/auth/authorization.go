@@ -3,18 +3,46 @@
  * @Author: neozhang
  * @Date: 2022-01-12 22:52:05
  * @LastEditors: neozhang
- * @LastEditTime: 2022-01-12 23:12:18
+ * @LastEditTime: 2022-02-12 17:12:07
  */
 package auth
 
 import (
 	"cmdb/models"
+	"cmdb/services"
+	"net/http"
+	"strings"
 
 	"github.com/astaxie/beego"
 )
 
+//所有需要认证才能访问的基础控制器
 type AuthorizationController struct {
-	//TODO
 	beego.Controller
-	LoginUser models.User
+	LoginUser *models.User
+}
+
+func (c *AuthorizationController) getNav() string {
+	controllerName, _ := c.GetControllerAndAction()
+	return strings.ToLower(strings.TrimSuffix(controllerName, "Controller"))
+}
+
+//用户认证检查
+func (c *AuthorizationController) Prepare() {
+	sessionKey := beego.AppConfig.DefaultString("auth::SessionKey", "user")
+	sessionValue := c.GetSession(sessionKey)
+	c.Data["loginUser"] = nil
+
+	if sessionValue != nil {
+		if pk, ok := sessionValue.(int); ok {
+			if user := services.UserService.GetByPk(pk); user != nil {
+				c.Data["loginUser"] = user
+				c.LoginUser = user
+				return
+			}
+		}
+	}
+
+	action := beego.AppConfig.DefaultString("auth::LoginAction", "AuthController.Login")
+	c.Redirect(beego.URLFor(action), http.StatusFound)
 }
