@@ -123,7 +123,7 @@ func (c *UserController) Modify() {
 
 //删除用户数据
 func (c *UserController) Delete() {
-	if pk, err := c.GetInt("pk"); err == nil && c.LoginUser.ID != pk {
+	if pk, err := c.GetInt("pk"); err == nil {
 		services.UserService.DeleteUser(pk)
 	}
 	c.Redirect(beego.URLFor("UserController.Query"), http.StatusFound)
@@ -194,84 +194,84 @@ func (c *UserController) Delete() {
 // 	c.ServeJSON()
 // }
 
-func (c *UserController) Lock() {
-	pk, _ := c.GetInt("pk")
-	if pk != c.User.Id {
-		models.DefaultUserManager.SetStatusById(pk, 1)
-		c.Data["json"] = map[string]interface{}{
-			"code":   200,
-			"text":   "锁定成功",
-			"result": nil, //可以返回删除的用户
-		}
-	} else {
-		c.Data["json"] = map[string]interface{}{
-			"code":   400,
-			"text":   "当前用户不能锁定自己",
-			"result": nil, //可以返回删除的用户
-		}
-	}
-	c.ServeJSON()
-}
+// func (c *UserController) Lock() {
+// 	pk, _ := c.GetInt("pk")
+// 	if pk != c.User.Id {
+// 		models.DefaultUserManager.SetStatusById(pk, 1)
+// 		c.Data["json"] = map[string]interface{}{
+// 			"code":   200,
+// 			"text":   "锁定成功",
+// 			"result": nil, //可以返回删除的用户
+// 		}
+// 	} else {
+// 		c.Data["json"] = map[string]interface{}{
+// 			"code":   400,
+// 			"text":   "当前用户不能锁定自己",
+// 			"result": nil, //可以返回删除的用户
+// 		}
+// 	}
+// 	c.ServeJSON()
+// }
 
-func (c *UserController) UnLock() {
-	pk, _ := c.GetInt("pk")
-	if pk != c.User.Id {
-		models.DefaultUserManager.SetStatusById(pk, 0)
-		c.Data["json"] = map[string]interface{}{
-			"code":   200,
-			"text":   "解锁成功",
-			"result": nil, //可以返回删除的用户
-		}
-	} else {
-		c.Data["json"] = map[string]interface{}{
-			"code":   400,
-			"text":   "当前用户不能解锁自己",
-			"result": nil, //可以返回删除的用户
-		}
-	}
-	c.ServeJSON()
-}
+// func (c *UserController) UnLock() {
+// 	pk, _ := c.GetInt("pk")
+// 	if pk != c.User.Id {
+// 		models.DefaultUserManager.SetStatusById(pk, 0)
+// 		c.Data["json"] = map[string]interface{}{
+// 			"code":   200,
+// 			"text":   "解锁成功",
+// 			"result": nil, //可以返回删除的用户
+// 		}
+// 	} else {
+// 		c.Data["json"] = map[string]interface{}{
+// 			"code":   400,
+// 			"text":   "当前用户不能解锁自己",
+// 			"result": nil, //可以返回删除的用户
+// 		}
+// 	}
+// 	c.ServeJSON()
+// }
 
-func (c *UserController) Password() {
-	if c.Ctx.Input.IsPost() {
-		json := map[string]interface{}{
-			"code": 400,
-			"text": "提交数据错误",
-		}
+// func (c *UserController) Password() {
+// 	if c.Ctx.Input.IsPost() {
+// 		json := map[string]interface{}{
+// 			"code": 400,
+// 			"text": "提交数据错误",
+// 		}
 
-		form := &forms.UserPasswordForm{User: c.User}
-		valid := &validation.Validation{}
-		if err := c.ParseForm(form); err == nil {
-			if ok, err := valid.Valid(form); err != nil {
-				valid.SetError("error", err.Error())
-				json["result"] = valid.Errors
-			} else if ok {
-				err := models.DefaultUserManager.UpdatePassword(c.User.Id, form.Password)
-				if err == nil {
-					json = map[string]interface{}{
-						"code": 200,
-						"text": "修改密码成功",
-					}
-				} else {
-					json = map[string]interface{}{
-						"code": 500,
-						"text": "服务器错误",
-					}
-				}
-			} else {
-				json["result"] = valid.Errors
-			}
-		} else {
-			valid.SetError("error", err.Error())
-			json["result"] = valid.Errors
-		}
+// 		form := &forms.UserPasswordForm{User: c.User}
+// 		valid := &validation.Validation{}
+// 		if err := c.ParseForm(form); err == nil {
+// 			if ok, err := valid.Valid(form); err != nil {
+// 				valid.SetError("error", err.Error())
+// 				json["result"] = valid.Errors
+// 			} else if ok {
+// 				err := models.DefaultUserManager.UpdatePassword(c.User.Id, form.Password)
+// 				if err == nil {
+// 					json = map[string]interface{}{
+// 						"code": 200,
+// 						"text": "修改密码成功",
+// 					}
+// 				} else {
+// 					json = map[string]interface{}{
+// 						"code": 500,
+// 						"text": "服务器错误",
+// 					}
+// 				}
+// 			} else {
+// 				json["result"] = valid.Errors
+// 			}
+// 		} else {
+// 			valid.SetError("error", err.Error())
+// 			json["result"] = valid.Errors
+// 		}
 
-		c.Data["json"] = json
-		c.ServeJSON()
-	} else {
-		c.TplName = "user/password.html"
-	}
-}
+// 		c.Data["json"] = json
+// 		c.ServeJSON()
+// 	} else {
+// 		c.TplName = "user/password.html"
+// 	}
+// }
 
 type TokenController struct {
 	auth.LoginRequiredController

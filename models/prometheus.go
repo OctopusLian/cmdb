@@ -3,44 +3,49 @@
  * @Author: neozhang
  * @Date: 2022-01-12 23:25:48
  * @LastEditors: neozhang
- * @LastEditTime: 2022-01-23 14:50:04
+ * @LastEditTime: 2022-02-12 17:49:28
  */
 package models
 
-// type Node struct {
-// 	ID        int
-// 	UUID      string
-// 	Hostname  string
-// 	Addr      string
-// 	CreatedAt *time.Time `orm:"auto_now_add"`
-// 	UpdatedAt *time.Time `orm:"auto_now"`
-// 	DeletedAt *time.Time `orm:"null"`
-// 	Jobs      []*Job
-// }
+import (
+	"time"
 
-// type Jobs struct {
-// 	ID        int
-// 	Key       string
-// 	Remark    string
-// 	CreatedAt *time.Time `orm:"auto_now_add"`
-// 	UpdatedAt *time.Time `orm:"auto_now"`
-// 	DeletedAt *time.Time `orm:"null"`
-// }
+	"github.com/astaxie/beego/orm"
+)
 
-// type Target struct {
-// 	ID        int
-// 	UUID      string
-// 	Hostname  string
-// 	Addr      string
-// 	CreatedAt *time.Time `orm:"auto_now_add"`
-// 	UpdatedAt *time.Time `orm:"auto_now"`
-// 	DeletedAt *time.Time `orm:"null"`
-// 	Job       *Job
-// }
+type Node struct {
+	ID        int        `orm:"column(id);"`
+	UUID      string     `orm:"column(uuid);varchar(64)"`
+	Hostname  string     `orm:"varchar(64)"`
+	Addr      string     `orm:"varchar(512)"`
+	CreatedAt *time.Time `orm:"auto_now_add"`
+	UpdatedAt *time.Time `orm:"auto_now"`
+	DeletedAt *time.Time `orm:"null"`
+	Jobs      []*Job
+}
 
-// type Job struct {
-// }
+type Job struct {
+	ID        int        `orm:"column(id);"`
+	Key       string     `orm:"varchar(64)"`
+	Remark    string     `orm:"varchar(512)"`
+	CreatedAt *time.Time `orm:"auto_now_add"`
+	UpdatedAt *time.Time `orm:"auto_now"`
+	DeletedAt *time.Time `orm:"null"`
+	Node      *Node      `orm:"rel(fk)"`
+	Targets   []*Target  `orm:"reverse(many)"`
+}
 
-// func init() {
-// 	orm.RegisterModel(new(Node), new(Jobs), new(Target))
-// }
+type Target struct {
+	ID        int        `orm:"column(id);"`
+	Name      string     `orm:"varchar(64)"`
+	Remark    string     `orm:"varchar(512)"`
+	Addr      string     `orm:"varchar(126)"`
+	CreatedAt *time.Time `orm:"auto_now_add"`
+	UpdatedAt *time.Time `orm:"auto_now"`
+	DeletedAt *time.Time `orm:"null"`
+	Job       *Job       `orm:"rel(fk)"`
+}
+
+func init() {
+	orm.RegisterModel(new(Node), new(Job), new(Target))
+}

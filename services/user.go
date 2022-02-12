@@ -3,7 +3,7 @@
  * @Author: neozhang
  * @Date: 2022-02-11 21:45:27
  * @LastEditors: neozhang
- * @LastEditTime: 2022-02-12 16:53:30
+ * @LastEditTime: 2022-02-12 17:28:11
  */
 package services
 
@@ -11,7 +11,7 @@ import (
 	"cmdb/forms"
 	"cmdb/models"
 
-	"github.com/beego/beego/v2/client/orm"
+	"github.com/astaxie/beego/orm"
 )
 
 type userService struct {

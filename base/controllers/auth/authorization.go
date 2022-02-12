@@ -3,7 +3,7 @@
  * @Author: neozhang
  * @Date: 2022-01-12 22:52:05
  * @LastEditors: neozhang
- * @LastEditTime: 2022-02-12 17:12:07
+ * @LastEditTime: 2022-02-12 18:14:10
  */
 package auth
 
@@ -11,7 +11,6 @@ import (
 	"cmdb/models"
 	"cmdb/services"
 	"net/http"
-	"strings"
 
 	"github.com/astaxie/beego"
 )
@@ -20,11 +19,6 @@ import (
 type AuthorizationController struct {
 	beego.Controller
 	LoginUser *models.User
-}
-
-func (c *AuthorizationController) getNav() string {
-	controllerName, _ := c.GetControllerAndAction()
-	return strings.ToLower(strings.TrimSuffix(controllerName, "Controller"))
 }
 
 //用户认证检查
