@@ -3,23 +3,56 @@
  * @Author: neozhang
  * @Date: 2022-02-11 21:15:34
  * @LastEditors: neozhang
- * @LastEditTime: 2022-02-11 21:44:34
+ * @LastEditTime: 2022-02-12 20:41:31
  */
 package controllers
 
 import (
+	"cmdb/base/controllers/auth"
+	"cmdb/services"
 	"fmt"
 	"net/http"
 
 	"github.com/astaxie/beego"
 )
 
+type NodeController struct {
+	auth.LayoutController
+}
+
+func (c *NodeController) Prepare() {
+	c.LayoutController.Prepare()
+	c.Data["nav"] = "prometheus"
+	c.Data["subnav"] = "node"
+}
+
+func (c *NodeController) Query() {
+	beego.ReadFromRequest(&c.Controller)
+
+	q := c.GetString("q")
+	c.Data["nodes"] = services.NodeService.Query(q)
+	c.Data["q"] = q
+	c.TplName = "prometheus/node/query.html"
+}
+
 type prometheusController struct {
-	LayoutController
+	auth.LayoutController
+}
+
+func (c *prometheusController) Prepare() {
+	c.LayoutController.Prepare()
+	c.Data["nav"] = "prometheus"
+	c.Data["subnav"] = c.GetNav()
 }
 
 type JobController struct {
 	prometheusController
+}
+
+func (c *JobController) Prepare() {
+	c.LayoutController.Prepare()
+	c.Data["nav"] = "prometheus"
+	c.Data["subnav"] = "node"
 }
 
 func (c *JobController) Query() {
@@ -82,11 +115,17 @@ type TargetController struct {
 	prometheusController
 }
 
+func (c *TargetController) Prepare() {
+	c.LayoutController.Prepare()
+	c.Data["nav"] = "prometheus"
+	c.Data["subnav"] = "node"
+}
+
 func (c *TargetController) Query() {
 	beego.ReadFromRequest(&c.Controller)
 
 	q := c.GetString("q")
-	c.Data["jobs"] = services
+	c.Data["targets"] = services.TargetService
 	c.Data["q"] = q
 
 	c.TplName = "prometheus/target/query.html"

@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -31,6 +32,8 @@ type UserController struct {
 
 //查询用户
 func (c *UserController) Query() {
+	flash := beego.ReadFromRequest(&c.Controller)
+	fmt.Println(flash.Data)
 	q := c.GetString("q")
 	c.Data["users"] = services.UserService.Query(q)
 	c.Data["q"] = q

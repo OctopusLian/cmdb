@@ -1,3 +1,10 @@
+/*
+ * @Description:
+ * @Author: neozhang
+ * @Date: 2022-02-11 13:17:09
+ * @LastEditors: neozhang
+ * @LastEditTime: 2022-02-12 21:37:44
+ */
 package routers
 
 import (
@@ -10,6 +17,9 @@ import (
 )
 
 func init() {
+	//beego.ErrorController(&controllers.ErrorController{})
+	beego.Router("/home", &controllers.HomeController{})
+
 	// 认证
 	beego.Router("/", &controllers.IndexController{}, "get:Index")
 
@@ -28,6 +38,7 @@ func init() {
 	// 用户
 	beego.AutoRouter(&controllers.UserController{})
 	beego.AutoRouter(&controllers.TokenController{})
+	//beego.AutoRouter(&controllers.PasswordController{})
 
 	// 云平台页面
 	beego.AutoRouter(&controllers.CloudPlatformPageController{})
@@ -58,6 +69,11 @@ func init() {
 
 	// 告警
 	beego.AutoRouter(&controllers.AlarmController{})
+
+	//prometheus
+	beego.AutoRouter(&controllers.NodeController{})
+	beego.AutoRouter(&controllers.JobController{})
+	beego.AutoRouter(&controllers.TargetController{})
 
 	v1Namespace := beego.NewNamespace("/v1",
 		beego.NSRouter("api/heartbeat/:uuid/", &v1.APIController{}, "*:Heartbeat"),
