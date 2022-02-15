@@ -3,7 +3,7 @@
  * @Author: neozhang
  * @Date: 2022-02-11 21:15:34
  * @LastEditors: neozhang
- * @LastEditTime: 2022-02-13 20:42:29
+ * @LastEditTime: 2022-02-15 21:11:08
  */
 package controllers
 
@@ -92,7 +92,7 @@ func (c *JobController) Create() {
 	}
 	c.Data["form"] = form
 	c.Data["xsrf_token"] = c.XSRFToken()
-	c.Data["nodes"] = services
+	c.Data["nodes"] = services.JobService.Create(form)
 	c.TplName = "prometheus/job/create.html"
 }
 
@@ -106,8 +106,8 @@ func (c *JobController) Modify() {
 		}
 	} else {
 		if pk, err := c.GetInt("pk"); err == nil {
-			job := services
-			form.ID = job.ID
+			job := services.JobService.GetByPk(pk)
+			// form.ID = job.ID
 			form.Key = job.Key
 			form.Remark = job.Remark
 			form.Node = job.Node.ID
@@ -116,7 +116,7 @@ func (c *JobController) Modify() {
 
 	c.Data["form"] = form
 	c.Data["xsrf_token"] = c.XSRFToken()
-	c.Data["nodes"] = services
+	c.Data["nodes"] = services.JobService
 	c.TplName = "prometheus/job/modify.html"
 }
 
@@ -152,8 +152,8 @@ func (c *TargetController) Create() {
 	if c.Ctx.Input.IsPost() {
 		if err := c.ParseForm(form); err == nil {
 			//验证
-			services
-			c.Redirect(beego.URLFor("JobController.Query"), http.StatusFound)
+			services.TargetService.
+				c.Redirect(beego.URLFor("JobController.Query"), http.StatusFound)
 		}
 	}
 	c.Data["form"] = form
@@ -163,26 +163,26 @@ func (c *TargetController) Create() {
 }
 
 func (c *TargetController) Modify() {
-	form := &forms.JobCreateForm{}
+	//Get 查询值显示
+	//POST 更新
+	form := &forms.TargetModifyForm{}
 	if c.Ctx.Input.IsPost() {
 		if err := c.ParseForm(form); err == nil {
 			//验证
-			services
+			services.TargetService.Modify()
 			c.Redirect(beego.URLFor("JobController.Query"), http.StatusFound)
 		}
 	} else {
 		if pk, err := c.GetInt("pk"); err == nil {
-			job := services
-			form.ID = job.ID
-			form.Key = job.Key
-			form.Remark = job.Remark
-			form.Node = job.Node.ID
+			if target := services.TargetService.GetByPk(pk); target != nil {
+				form = forms.NewTargetModifyForm(target)
+			}
 		}
 	}
 
 	c.Data["form"] = form
 	c.Data["xsrf_token"] = c.XSRFToken()
-	c.Data["nodes"] = services
+	c.Data["nodes"] = services.TargetService.Query("")
 	c.TplName = "prometheus/target/modify.html"
 }
 
