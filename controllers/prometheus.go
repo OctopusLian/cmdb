@@ -3,7 +3,7 @@
  * @Author: neozhang
  * @Date: 2022-02-11 21:15:34
  * @LastEditors: neozhang
- * @LastEditTime: 2022-02-12 20:41:31
+ * @LastEditTime: 2022-02-13 20:42:29
  */
 package controllers
 
@@ -13,11 +13,23 @@ import (
 	"fmt"
 	"net/http"
 
+	"cmdb/forms"
+
 	"github.com/astaxie/beego"
 )
 
-type NodeController struct {
+type prometheusController struct {
 	auth.LayoutController
+}
+
+func (c *prometheusController) Prepare() {
+	c.LayoutController.Prepare()
+	c.Data["nav"] = "prometheus"
+	c.Data["subnav"] = c.GetNav()
+}
+
+type NodeController struct {
+	prometheusController
 }
 
 func (c *NodeController) Prepare() {
@@ -35,14 +47,11 @@ func (c *NodeController) Query() {
 	c.TplName = "prometheus/node/query.html"
 }
 
-type prometheusController struct {
-	auth.LayoutController
-}
-
-func (c *prometheusController) Prepare() {
-	c.LayoutController.Prepare()
-	c.Data["nav"] = "prometheus"
-	c.Data["subnav"] = c.GetNav()
+func (c *NodeController) Delete() {
+	if pk, err := c.GetInt("pk"); err == nil {
+		services.NodeService.Delete(pk)
+	}
+	c.Redirect(beego.URLFor("NodeController.Query"), http.StatusFound)
 }
 
 type JobController struct {
@@ -59,7 +68,7 @@ func (c *JobController) Query() {
 	beego.ReadFromRequest(&c.Controller)
 
 	q := c.GetString("q")
-	c.Data["jobs"] = services
+	c.Data["jobs"] = services.JobService.Query(q)
 	c.Data["q"] = q
 
 	c.TplName = "prometheus/job/query.html"
@@ -67,7 +76,7 @@ func (c *JobController) Query() {
 
 func (c *JobController) Delete() {
 	if pk, err := c.GetInt("pk"); err == nil {
-
+		services.JobService.Delete(pk)
 	}
 	c.Redirect(beego.URLFor("JobController.Query"), http.StatusFound)
 }
@@ -77,7 +86,7 @@ func (c *JobController) Create() {
 	if c.Ctx.Input.IsPost() {
 		if err := c.ParseForm(form); err == nil {
 			//验证
-			services
+			services.JobService.Create(form)
 			c.Redirect(beego.URLFor("JobController.Query"), http.StatusFound)
 		}
 	}
@@ -133,9 +142,9 @@ func (c *TargetController) Query() {
 
 func (c *TargetController) Delete() {
 	if pk, err := c.GetInt("pk"); err == nil {
-
+		services.TargetService.Delete(pk)
 	}
-	c.Redirect(beego.URLFor("JobController.Query"), http.StatusFound)
+	c.Redirect(beego.URLFor("TargetController.Query"), http.StatusFound)
 }
 
 func (c *TargetController) Create() {
